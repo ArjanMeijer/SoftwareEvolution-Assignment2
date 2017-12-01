@@ -13,6 +13,7 @@ import Exception;			// Try Catch
 // Args input:
 // 	0) Type of clone, [0,1,2]
 //  1) [0] Small Project, [1] Large project
+//  2) Output file location
 public void main(list[str] args) {
 	println("Clone Detector by Arjan Meijer and Niels Boerkamp");
 		
@@ -25,10 +26,7 @@ public void main(list[str] args) {
 			outputFile = toLocation("file:///<args[2]>");
 		catch : isValidInput = false;
 		if(cloneType != -1 && projectID != -1 && isValidInput)
-		{
-			isValidInput = true;
 			DetectClones(cloneType, projectID, outputFile);	
-		}
 	} else
 		isValidInput = false;
 	
