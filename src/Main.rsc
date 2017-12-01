@@ -1,15 +1,44 @@
 module Main
 
-import IO;
+import IO;					// Println
+import List; 				// indexOf
+import String; 				// toLocation
+import Exception;			// Try Catch
+
 
 // To run this application from the console you should use this command:
 //		java -Xmx1G -Xss32m -jar libs/rascal-shell-stable.jar Main.rsc args*
 // This command assumes the .jar file is placed in the right folder.
 
+// Args input:
+// 	0) Type of clone, [0,1,2]
+//  1) [0] Small Project, [1] Large project
 public void main(list[str] args) {
 	println("Clone Detector by Arjan Meijer and Niels Boerkamp");
+		
+	bool isValidInput = true;
+	if(size(args) == 3){
+		int cloneType = indexOf(["0","1","2"], args[0]);
+		int projectID = indexOf(["0","1"], args[1]);
+		loc outputFile;
+		try
+			outputFile = toLocation("file:///<args[2]>");
+		catch : isValidInput = false;
+		if(cloneType != -1 && projectID != -1 && isValidInput)
+		{
+			isValidInput = true;
+			DetectClones(cloneType, projectID, outputFile);	
+		}
+	} else
+		isValidInput = false;
 	
-	for(a <- args){
-		println(a);
+	if(!isValidInput){
+		println("invalid input!");
 	}
+}
+
+private void DetectClones(int cloneType, int projectID, loc outputFile)
+{
+	loc project = [|project://smallsql0.21_src|,|project://hsqldb-2.3.1|][projectID];
+	println("Detected clones!");
 }
