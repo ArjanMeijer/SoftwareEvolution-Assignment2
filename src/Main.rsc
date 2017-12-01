@@ -7,7 +7,7 @@ import Exception;			// Try Catch
 
 
 // To run this application from the console you should use this command:
-//		java -Xmx1G -Xss32m -jar libs/rascal-shell-stable.jar Main.rsc args*
+//		java -Xmx1G -Xss32m -jar libs/rascal-shell-stable.jar Main.rsc 0 1 C:/user/meije/test.txt
 // This command assumes the .jar file is placed in the right folder.
 
 // Args input:
@@ -22,13 +22,16 @@ public void main(list[str] args) {
 		int cloneType = indexOf(["0","1","2"], args[0]);
 		int projectID = indexOf(["0","1"], args[1]);
 		loc outputFile;
+		
 		try
 			outputFile = toLocation("file:///<args[2]>");
 		catch : isValidInput = false;
+		
 		if(cloneType != -1 && projectID != -1 && isValidInput)
 			DetectClones(cloneType, projectID, outputFile);	
-	} else
+	} else {
 		isValidInput = false;
+	};
 	
 	if(!isValidInput){
 		println("invalid input!");
