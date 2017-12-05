@@ -43,6 +43,6 @@ public void main(list[str] args) {
 private void DetectClones(int cloneType, int projectID, loc outputFile)
 {
 	loc project = [|project://smallsql0.21_src|,|project://hsqldb-2.3.1|][projectID];
-	CreateSuffixTrie(["int","i","=","1","int","i","=","1","$"]);
+	CreateTrie("abcabx");
 	println("Detected clones!");
 }
