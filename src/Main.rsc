@@ -5,6 +5,7 @@ import List; 				// indexOf
 import String; 				// toLocation
 import Exception;			// Try Catch
 
+import STrie;
 
 // To run this application from the console you should use this command:
 //		java -Xmx1G -Xss32m -jar libs/rascal-shell-stable.jar Main.rsc 0 1 C:/user/meije/test.txt
@@ -16,7 +17,8 @@ import Exception;			// Try Catch
 //  2) Output file location
 public void main(list[str] args) {
 	println("Clone Detector by Arjan Meijer and Niels Boerkamp");
-		
+	DetectClones(0,0,|home:///henk|);
+	/*	
 	bool isValidInput = true;
 	if(size(args) == 3){
 		int cloneType = indexOf(["0","1","2"], args[0]);
@@ -35,11 +37,12 @@ public void main(list[str] args) {
 	
 	if(!isValidInput){
 		println("invalid input!");
-	}
+	}*/
 }
 
 private void DetectClones(int cloneType, int projectID, loc outputFile)
 {
 	loc project = [|project://smallsql0.21_src|,|project://hsqldb-2.3.1|][projectID];
+	CreateSuffixTrie(["int","i","=","1","int","i","=","1","$"]);
 	println("Detected clones!");
 }
