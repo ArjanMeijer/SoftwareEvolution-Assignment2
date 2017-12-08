@@ -113,54 +113,116 @@ private void printTrie(lrel[map[str,int],int] index, int n){
 
 public void CreateTrie(str s)
 {
-	// char + <start index + endindex + continue node>;
-	list[map[str,tuple[int,int,int]]] internalNodes = [()];
-	tuple[int,str,int] activePoint = <0,"",0>;
+	// char + <start index + endindex + continue node> + suffix link + start Index;
+	lrel[map[str,tuple[int,int,int]], int, int] internalNodes = [<(),-2,0>];
+	list[map[str,int]] nodePosition = [()];
+	tuple[int,int,int] activePoint = <0,0,0>;
 	int remainder = 1;
 	
 	// current end = -1
+	// non-existing suffix link = -2
+	
 	for(int i <- [0..size(s)])
 	{
 		bool nowSet = false;
-		if(s[i] notin internalNodes[activePoint[0]])
-			internalNodes[activePoint[0]] += (s[i]:<i,-1, -1>);
-		else if(activePoint[1] == ""){
+		if(s[i] notin internalNodes[0][0])
+		{
+			internalNodes[0][0] += (s[i]:<i,-1, -1>);
+			nodePosition[activePoint[0]] += (s[i]:i);	
+		}
+		else if(activePoint[2] == 0){
 			remainder += 1;	
-			activePoint = <0,s[i],1>;
+			activePoint[1] = i;
+			activePoint[2] += 1;
 			nowSet = true;
 		};
 		
-		
-		bool finished = false;
-		int dec = 0;
-		while(remainder > 1 && !nowSet && !finished)
-		{
-			finished = true;
-			if(s[internalNodes[activePoint[0]][activePoint[1]][0] + activePoint[2]] == s[i]){
+		if(internalNodes[activePoint[0]][0][s[activePoint[1]]][2] >= 0){
+			// string till current end
+			str currentString = substring(s, activePoint[1], i+1);
+			int end = internalNodes[activePoint[0]][0][s[i]][1];
+			end = end == -1 ? i + 1 : end;
+			str targetString = substring(s, internalNodes[activePoint[0]][0][s[activePoint[1]]][0],end); 		
+			if(currentString == targetString){
 				remainder += 1;
-				activePoint[2] += 1;
-			} else {
-				// insertion
-				// You're a wizzard Harry!
-				int tEnd = internalNodes[activePoint[0]][activePoint[1]][1];
-				internalNodes[activePoint[0]][activePoint[1]][1] = activePoint[2];
-				internalNodes[activePoint[0]][activePoint[1]][2] = size(internalNodes);
-				internalNodes += (s[activePoint[2]]:<activePoint[2],tEnd,-1>,s[i]:<i,-1,-1>);
-				remainder -= 1;
-				
-				// from root
-				if(activePoint[0] == 0){
-					activePoint[1] = s[(i + 1) - (remainder)];
-					dec += 1;
-				};
-				finished = false;
+				activePoint = <internalNodes[activePoint[0]][0][s[activePoint[1]]][2],0,0>;
 			};
+		} else {		
+			bool finished = false;
+			int dec = 0;
+			int iterations =0;
+			while(remainder > 1 && !nowSet && !finished)
+			{
+				finished = true;
+			
+				if(s[internalNodes[activePoint[0]][0][s[activePoint[1]]][0] + activePoint[2]] == s[i]){
+					remainder += 1;
+					activePoint[2] += 1;
+				} else {
+					// insertion
+					// You're a wizzard Harry!
+					int tEnd = /*nodePosition[activePoint[0]][s[activePoint[1]]] +*/ internalNodes[activePoint[0]][0][s[activePoint[1]]][1];
+				
+					map[str,tuple[int,int,int]] tItem = internalNodes[activePoint[0]][0];
+					
+					//println("Assigning for <s[activePoint[1]]>: <tItem[s[activePoint[1]]][1]> = <activePoint[2]>");
+					//println("\t<activePoint[2]> + <internalNodes[activePoint[0]]>");
+					int p = activePoint[2];
+					p = p<nodePosition[activePoint[0]][s[activePoint[1]]]? p + nodePosition[activePoint[0]][s[activePoint[1]]]:p;
+					
+					tItem[s[activePoint[1]]][1] = p;//activePoint[2];
+				
+					tItem[s[activePoint[1]]][2] = size(internalNodes);				
+					
+					internalNodes[activePoint[0]][0] = tItem;
+					
+					println("ASDFKJA: <s[activePoint[1]]> + <activePoint> + <internalNodes[activePoint[0]]>");
+					println(nodePosition[activePoint[0]][s[activePoint[1]]]);
+					int tIndex = activePoint[2] + internalNodes[activePoint[0]][2];
+					//if(activePoint[0] == 0)
+					//	tIndex += nodePosition[0][s[activePoint[1]]];
+					internalNodes += <(s[tIndex] : <tIndex, tEnd, -1>, s[i]:<i,-1,-1>),-2,activePoint[2]>;
+					nodePosition += (s[tIndex]:tIndex, s[i]:i);
+					remainder -= 1;
+					
+									
+					// rule 2
+					if(iterations != 0)
+					{
+						println("rule 2");
+						internalNodes[size(internalNodes) - 2][1] = size(internalNodes) - 1;	
+					};
+					
+					// rule 3
+					if(activePoint[0] != 0 && internalNodes[activePoint[0]][1] != -2){
+						activePoint[0] = internalNodes[activePoint[0]][1];
+					} else {
+						activePoint[0] = 0;
+					};
+					
+					// rule 1
+					if(activePoint[0] == 0){
+						println("rule 1");
+						activePoint[1] = (i + 1) - remainder;
+						dec += 1;
+					};
+					
+					/*if(i == size(s) - 1){
+						text(internalNodes);
+						println("REMAINDER:<remainder> - <iterations> - <activePoint>");
+					};*/
+					
+					finished = false;
+				};
+				
+				iterations += 1;
+			};
+			activePoint[2] -= dec;
 		};
-		activePoint[2] -= dec;
 	};
-	
-	println(remainder);
-	println(activePoint);
+	//text(nodePosition);
+	//println(remainder);
+	//println(activePoint);
 
 	text(internalNodes);
 }
