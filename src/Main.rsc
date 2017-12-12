@@ -8,6 +8,9 @@ import util::ValueUI;
 
 import STrie;
 import Ukkonen;
+import Map;
+import Tools::Reader;
+import Tools::CodeParser;
 
 // To run this application from the console you should use this command:
 //		java -Xmx1G -Xss32m -jar libs/rascal-shell-stable.jar Main.rsc 0 1 C:/user/meije/test.txt
@@ -48,5 +51,20 @@ private void DetectClones(int cloneType, int projectID, loc outputFile)
 	//CreateTrie("abcabxabcd");
 	//println("Detected clones!");
 	//CreateUkkonen("abcabxabcd");
-	println(CreateUkkonen("abcabxabcd"));//abcabxabcd
+	map[str,int] index = ();
+	map[tuple[int,int],loc] locIndex = ();
+	list[int] values = [];
+	//list[str] input = GetAllLines(|project://hsqldb-2.3.1|);
+	list[str] input = readFileLines(|home:///testFile.java|);//["a","b","c","a","b","x","a","b","c","d"];
+	input = [RemoveComments(x) | x <- input];
+	for(int i <- [0 .. size(input)])
+	{
+		if(input[i] notin index)
+			index += (input[i]:size(index));
+		values += index[input[i]];
+	}
+	
+	println("Finished reading");
+	
+	println(CreateUkkonen(values));//abcabxabcd
 }

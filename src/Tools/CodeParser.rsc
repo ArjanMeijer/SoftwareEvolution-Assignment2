@@ -4,7 +4,7 @@ import String;
 import List;
 import IO;
 
-public tuple[str,int] RemoveComments(str line){
+public str RemoveComments(str line){
 	bool isString = false;
 	bool isComment = false;
 	bool isMComment = false;
@@ -69,5 +69,5 @@ public tuple[str,int] RemoveComments(str line){
 		if(lastChar == "\n")
 			lines += 1;
 	}
-	return <result, lines>;
+	return result;
 }

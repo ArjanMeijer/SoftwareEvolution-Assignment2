@@ -4,13 +4,13 @@ import Map;
 /*
 	structure: NodeIndex
 		map:
-			character
+			value-id
 			tuple:
 				start index,
 				size,
 				next node
 */
-alias NodeIndex = map[str,tuple[int,int,int]];
+alias NodeIndex = map[int,tuple[int,int,int]];
 
 /*  structure: NodeList
 		list relation:
@@ -30,9 +30,9 @@ alias Pointer = tuple[int,int,int];
 
 //lrel[map[str,tuple[int,int,int]],int, int] NodeList = [];
 
-public int GetChild(NodeList nodes, Pointer activePoint, str s)
+public int GetChild(NodeList nodes, Pointer activePoint, list[int] index)
 {
-	return GetIndex(nodes, activePoint)[s[activePoint[1]]][2];
+	return GetIndex(nodes, activePoint)[index[activePoint[1]]][2];
 }
 
 /*public bool Contains(NodeList nodes, tuple[int,int,int] activePoint, str character)
@@ -44,9 +44,9 @@ public NodeIndex GetIndex(NodeList nodes, Pointer activePoint){
 	return nodes[activePoint[0]][0];
 }
 
-public tuple[int,int,int] GetIndexValue(NodeList nodes, Pointer activePoint, str s)
+public tuple[int,int,int] GetIndexValue(NodeList nodes, Pointer activePoint, list[int] index)
 {
-	return GetIndex(nodes,activePoint)[s[activePoint[1]]];
+	return GetIndex(nodes,activePoint)[index[activePoint[1]]];
 }
 
 public int GetSuffixLink(NodeList nodes, Pointer activePoint){

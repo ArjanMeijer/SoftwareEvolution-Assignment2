@@ -15,20 +15,20 @@ import Nodes;
 	int NO_CHILD = -3;
 	int ROOT = 0;
 	
-public NodeList CreateUkkonen(str s){
+public NodeList CreateUkkonen(list[int] input){
 	NodeList nodes = [<(),NONEXISTING_SUFFIX>];
 	Pointer activePoint = <ROOT,0,0>;
 	
 	int remainder = 1;
 	
-	for(int i <- [0..size(s)])
+	for(int i <- [0..size(input)])
 	{
-		if(s[i] notin GetIndex(nodes, activePoint))
+		if(input[i] notin GetIndex(nodes, activePoint))
 		{
-			nodes = Add(nodes, activePoint, i, CURRENT_END, s[i], NO_CHILD);	
+			nodes = Add(nodes, activePoint, i, CURRENT_END, input[i], NO_CHILD);	
 					
 			if(remainder > 1){		
-				tuple[int, NodeList, Pointer] traversed = TraverseTrie(nodes, activePoint, s, i, remainder);
+				tuple[int, NodeList, Pointer] traversed = TraverseTrie(nodes, activePoint, input, i, remainder);
 				remainder = traversed[0];
 				nodes = traversed[1];
 				activePoint = traversed[2];
@@ -37,8 +37,8 @@ public NodeList CreateUkkonen(str s){
 		} else {
 			activePoint = UpdateActivePoint(activePoint, i);
 
-			if(GetChild(nodes, activePoint, s) != NO_CHILD && RemainderEqualsEdge(s, activePoint, nodes))
-				activePoint = <GetChild(nodes, activePoint, s),0,0>;
+			if(GetChild(nodes, activePoint, input) != NO_CHILD && RemainderEqualsEdge(input, activePoint, nodes))
+				activePoint = <GetChild(nodes, activePoint, input),0,0>;
 			remainder += 1;	
 		};
 	};	
@@ -54,13 +54,13 @@ public NodeList CreateUkkonen(str s){
 			remainder
 			current iteration
 */
-public tuple[int, NodeList, Pointer] TraverseTrie(NodeList nodes, Pointer activePoint, str s, int i, int remainder, int iteration = 0){
-	if(s[i] in GetIndex(nodes, activePoint) && s[GetIndexValue(nodes, activePoint, s)[0] + activePoint[2]] == s[i]){
+public tuple[int, NodeList, Pointer] TraverseTrie(NodeList nodes, Pointer activePoint, list[int] values, int i, int remainder, int iteration = 0){
+	if(values[i] in GetIndex(nodes, activePoint) && values[GetIndexValue(nodes, activePoint, values)[0] + activePoint[2]] == values[i]){
 		remainder += 1;
 		activePoint[2] += 1;
 	} else {
 		// insertion
-		nodes = Insert(nodes, activePoint, s, i);
+		nodes = Insert(nodes, activePoint, values, i);
 		remainder -= 1;	
 		
 		// rule 1
@@ -73,9 +73,9 @@ public tuple[int, NodeList, Pointer] TraverseTrie(NodeList nodes, Pointer active
 		activePoint = Rule3(activePoint, nodes);
 		
 		if(remainder > 1 && activePoint[2] != 0)
-			return TraverseTrie(nodes, activePoint, s, i, remainder, iteration = iteration + 1);
+			return TraverseTrie(nodes, activePoint, values, i, remainder, iteration = iteration + 1);
 		else
-			nodes = Add(nodes, activePoint, activePoint[1], CURRENT_END, s[activePoint[1]], NO_CHILD);
+			nodes = Add(nodes, activePoint, activePoint[1], CURRENT_END, values[activePoint[1]], NO_CHILD);
 	};
 	return <remainder, nodes, activePoint>;
 }
@@ -90,10 +90,9 @@ public tuple[int, NodeList, Pointer] TraverseTrie(NodeList nodes, Pointer active
 			index of child node
 	Returns: nodes
 */
-public NodeList Add(NodeList nodes, Pointer activePoint, int s, int e, str character, int childIndex){
-	//println("Adding: <character> to <nodes[n][0]>");
+public NodeList Add(NodeList nodes, Pointer activePoint, int s, int e, int id, int childIndex){
 	if (activePoint[2] == 0)
-		nodes[activePoint[0]][0] += (character:<s,e,childIndex>);
+		nodes[activePoint[0]][0] += (id:<s,e,childIndex>);
 	return nodes;
 }
 
@@ -118,8 +117,8 @@ public Pointer UpdateActivePoint(Pointer activePoint, int i){
 			index
 	Returns: string to-add equals current edge
 */
-public bool RemainderEqualsEdge(str s, Pointer activePoint, NodeList nodes){
-	return GetIndexValue(nodes, activePoint, s)[1] == activePoint[2];
+public bool RemainderEqualsEdge(list[int] values, Pointer activePoint, NodeList nodes){
+	return GetIndexValue(nodes, activePoint, values)[1] == activePoint[2];
 }
 
 /*
@@ -175,10 +174,10 @@ public Pointer Rule3(Pointer activePoint, NodeList nodes){
 			string
 	Result:	nodes
 */
-public NodeList Branch(NodeList nodes, Pointer activePoint, str s){
+public NodeList Branch(NodeList nodes, Pointer activePoint, list[int] values){
 	NodeIndex nodeIndex = GetIndex(nodes, activePoint);	
-	nodeIndex[s[activePoint[1]]][1] = activePoint[2];			
-	nodeIndex[s[activePoint[1]]][2] = size(nodes);									
+	nodeIndex[values[activePoint[1]]][1] = activePoint[2];			
+	nodeIndex[values[activePoint[1]]][2] = size(nodes);									
 	nodes[activePoint[0]][0] = nodeIndex;
 	return nodes;
 }
@@ -191,9 +190,9 @@ public NodeList Branch(NodeList nodes, Pointer activePoint, str s){
 			index
 	Result:	nodes
 */
-public NodeList Insert(NodeList nodes, Pointer activePoint, str s, int i){
-	nodes = Branch(nodes, activePoint, s);		
-	int splitIndex = activePoint[2] + GetIndexValue(nodes, activePoint, s)[0];
-	nodes += <(s[splitIndex] : <splitIndex, CURRENT_END, NO_CHILD>, s[i]:<i, CURRENT_END, NO_CHILD>), NONEXISTING_SUFFIX>;
+public NodeList Insert(NodeList nodes, Pointer activePoint, list[int] values, int i){
+	nodes = Branch(nodes, activePoint, values);		
+	int splitIndex = activePoint[2] + GetIndexValue(nodes, activePoint, values)[0];
+	nodes += <(values[splitIndex] : <splitIndex, CURRENT_END, NO_CHILD>, values[i]:<i, CURRENT_END, NO_CHILD>), NONEXISTING_SUFFIX>;
 	return nodes;
 }
