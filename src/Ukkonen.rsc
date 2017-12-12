@@ -37,7 +37,7 @@ public NodeList CreateUkkonen(str s){
 		} else {
 			activePoint = UpdateActivePoint(activePoint, i);
 
-			if(GetChild(nodes, activePoint, s) != NO_CHILD && RemainderEqualsEdge(s, activePoint, nodes, i))
+			if(GetChild(nodes, activePoint, s) != NO_CHILD && RemainderEqualsEdge(s, activePoint, nodes))
 				activePoint = <GetChild(nodes, activePoint, s),0,0>;
 			remainder += 1;	
 		};
@@ -118,11 +118,8 @@ public Pointer UpdateActivePoint(Pointer activePoint, int i){
 			index
 	Returns: string to-add equals current edge
 */
-public bool RemainderEqualsEdge(str s, Pointer activePoint, NodeList nodes, int i){
-	str currentString = substring(s, activePoint[1], activePoint[1] + activePoint[2]);
-	int end = GetIndexValue(nodes, activePoint, s)[1] == -1 ? i + 1 : GetIndexValue(nodes, activePoint, s)[0] + GetIndexValue(nodes, activePoint, s)[1];
-	str targetString = substring(s, GetIndex(nodes,activePoint)[s[activePoint[1]]][0], end);
-	return currentString == targetString;
+public bool RemainderEqualsEdge(str s, Pointer activePoint, NodeList nodes){
+	return GetIndexValue(nodes, activePoint, s)[1] == activePoint[2];
 }
 
 /*
