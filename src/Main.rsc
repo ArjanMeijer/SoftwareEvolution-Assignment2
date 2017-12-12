@@ -4,8 +4,10 @@ import IO;					// Println
 import List; 				// indexOf
 import String; 				// toLocation
 import Exception;			// Try Catch
+import util::ValueUI;
 
 import STrie;
+import Ukkonen;
 
 // To run this application from the console you should use this command:
 //		java -Xmx1G -Xss32m -jar libs/rascal-shell-stable.jar Main.rsc 0 1 C:/user/meije/test.txt
@@ -42,7 +44,9 @@ public void main(list[str] args) {
 
 private void DetectClones(int cloneType, int projectID, loc outputFile)
 {
-	loc project = [|project://smallsql0.21_src|,|project://hsqldb-2.3.1|][projectID];
-	CreateTrie("abcabxabcd");
-	println("Detected clones!");
+	//loc project = [|project://smallsql0.21_src|,|project://hsqldb-2.3.1|][projectID];
+	//CreateTrie("abcabxabcd");
+	//println("Detected clones!");
+	//CreateUkkonen("abcabxabcd");
+	text(CreateUkkonen("abcabxabcd"));
 }

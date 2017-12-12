@@ -179,8 +179,7 @@ public void CreateTrie(str s)
 					println("ASDFKJA: <s[activePoint[1]]> + <activePoint> + <internalNodes[activePoint[0]]>");
 					println(nodePosition[activePoint[0]][s[activePoint[1]]]);
 					int tIndex = activePoint[2] + internalNodes[activePoint[0]][2];
-					//if(activePoint[0] == 0)
-					//	tIndex += nodePosition[0][s[activePoint[1]]];
+					println("<tIndex> ====== <i> ===== <activePoint>");
 					internalNodes += <(s[tIndex] : <tIndex, tEnd, -1>, s[i]:<i,-1,-1>),-2,activePoint[2]>;
 					nodePosition += (s[tIndex]:tIndex, s[i]:i);
 					remainder -= 1;
