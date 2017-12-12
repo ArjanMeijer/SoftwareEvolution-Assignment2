@@ -24,10 +24,8 @@ public NodeList CreateUkkonen(str s){
 	{
 		if(s[i] notin GetIndex(nodes, activePoint))
 		{
-			println(activePoint);
-			println(remainder);
-			if(activePoint[0] == 1)
-				nodes = Add(nodes, activePoint[0], i, CURRENT_END, s[i], NO_CHILD);	
+			//if(activePoint[2] < 1)
+			nodes = Add(nodes, activePoint, i, CURRENT_END, s[i], NO_CHILD);	
 					
 			if(remainder > 1){		
 				tuple[int, NodeList, Pointer] traversed = TraverseTrie(nodes, activePoint, s, i, remainder);
@@ -43,11 +41,7 @@ public NodeList CreateUkkonen(str s){
 				activePoint = <GetChild(nodes, activePoint, s),0,0>;
 			remainder += 1;	
 		};
-	};
-	//println(remainder);
-	//println("(<activePoint[0]>, <s[activePoint[1]]>, <activePoint[2]>)");
-	//text(nodes);
-	
+	};	
 	return nodes;
 }
 
@@ -80,9 +74,8 @@ public tuple[int, NodeList, Pointer] TraverseTrie(NodeList nodes, Pointer active
 		
 		if(remainder > 1 && activePoint[2] != 0)
 			return TraverseTrie(nodes, activePoint, s, i, remainder, iteration = iteration + 1);
-		else if (activePoint[2] == 0){
-			nodes = Add(nodes, 1, activePoint[1], CURRENT_END, s[activePoint[1]], NO_CHILD);
-		};
+		else
+			nodes = Add(nodes, activePoint, activePoint[1], CURRENT_END, s[activePoint[1]], NO_CHILD);
 	};
 	return <remainder, nodes, activePoint>;
 }
@@ -97,8 +90,10 @@ public tuple[int, NodeList, Pointer] TraverseTrie(NodeList nodes, Pointer active
 			index of child node
 	Returns: nodes
 */
-public NodeList Add(NodeList nodes, int n, int s, int e, str character, int childIndex){
-	nodes[n][0] += (character:<s,e,childIndex>);
+public NodeList Add(NodeList nodes, Pointer activePoint, int s, int e, str character, int childIndex){
+	//println("Adding: <character> to <nodes[n][0]>");
+	if (activePoint[2] == 0)
+		nodes[activePoint[0]][0] += (character:<s,e,childIndex>);
 	return nodes;
 }
 
