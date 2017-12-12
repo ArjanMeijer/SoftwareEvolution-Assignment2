@@ -11,6 +11,7 @@ import Ukkonen;
 import Map;
 import Tools::Reader;
 import Tools::CodeParser;
+import Nodes;
 
 // To run this application from the console you should use this command:
 //		java -Xmx1G -Xss32m -jar libs/rascal-shell-stable.jar Main.rsc 0 1 C:/user/meije/test.txt
@@ -52,19 +53,79 @@ private void DetectClones(int cloneType, int projectID, loc outputFile)
 	//println("Detected clones!");
 	//CreateUkkonen("abcabxabcd");
 	map[str,int] index = ();
+	map[int, str] rIndex = ();
 	map[tuple[int,int],loc] locIndex = ();
 	list[int] values = [];
 	//list[str] input = GetAllLines(|project://hsqldb-2.3.1|);
-	list[str] input = readFileLines(|home:///testFile.java|);//["a","b","c","a","b","x","a","b","c","d"];
+	
+	loc testFile = |project://CloneDetector/src/Test/TestFiles/testFile2.java|;
+	
+	//list[str] input = readFileLines(testFile);
+	list[str] input = ["a","b","c","a","b","x","a","b","c","d"];
+	
 	input = [RemoveComments(x) | x <- input];
 	for(int i <- [0 .. size(input)])
 	{
-		if(input[i] notin index)
+		if(input[i] notin index){
 			index += (input[i]:size(index));
+			rIndex += (index[input[i]]:input[i]);
+		}
 		values += index[input[i]];
 	}
 	
-	println("Finished reading");
 	
-	println(CreateUkkonen(values));//abcabxabcd
+	
+	println("Finished reading");
+	println("Do stuff!");
+	
+	NodeList strie = (CreateUkkonen(values));
+	
+	println(values);
+	NodeIndex root = strie[0][0];
+	
+	//println(strie[0]);
+	//for(tuple[NodeIndex,int] n <- strie)
+	//	println(PrintNode(input, n[0]));	
+	
+	WalkTree(strie, input, 0);	
+	
 }
+
+public list[list[str]] PrintNode(list[str] input, NodeIndex n) { 
+	list[list[str]] result = [];
+	
+	for(x <- n){
+		int s = n[x][0];
+		int e = n[x][1];
+		if(e == -1)
+			result += [[input[y]| y <- [s..size(input)]]];
+		else
+			result += [[input[y]| y <- [s..s+e]]];
+	}
+	
+	return result;
+}
+
+public void WalkTree(NodeList strie, list[str] input, int nIndex) {
+	for(int n <- strie[nIndex][0]) {
+		print(input[n]);
+		
+		int childNodeID = strie[nIndex][0][n][2];
+		if(childNodeID > 0)
+			WalkTree(strie, input, childNodeID);	
+	}
+}
+
+
+//{
+//  "files" : ["file1.java", "file2.java", "..."],
+//  "occurences" : [[1, 10, 20], [] ], 
+//  "classes" : [[0,1], [1,2]]
+//}
+//
+//class
+//  file1 en file2
+//  [0, start clone, end clone], [1, start clone, end clone]
+
+
+
