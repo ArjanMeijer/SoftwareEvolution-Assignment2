@@ -13,10 +13,11 @@ import Nodes;
 	int CURRENT_END = -1;
 	int NONEXISTING_SUFFIX = -2;
 	int NO_CHILD = -3;
+	int ROOT = 0;
 	
 public NodeList CreateUkkonen(str s){
-	NodeList nodes = [<("":<0,0,1>),NONEXISTING_SUFFIX,0>,<(),NONEXISTING_SUFFIX,0>];
-	Pointer activePoint = <1,0,0>;
+	NodeList nodes = [<(),NONEXISTING_SUFFIX>];
+	Pointer activePoint = <ROOT,0,0>;
 	
 	int remainder = 1;
 	
@@ -24,7 +25,6 @@ public NodeList CreateUkkonen(str s){
 	{
 		if(s[i] notin GetIndex(nodes, activePoint))
 		{
-			//if(activePoint[2] < 1)
 			nodes = Add(nodes, activePoint, i, CURRENT_END, s[i], NO_CHILD);	
 					
 			if(remainder > 1){		
@@ -35,7 +35,6 @@ public NodeList CreateUkkonen(str s){
 			};
 			
 		} else {
-			println("passed both");
 			activePoint = UpdateActivePoint(activePoint, i);
 
 			if(GetChild(nodes, activePoint, s) != NO_CHILD && RemainderEqualsEdge(s, activePoint, nodes, i))
@@ -43,8 +42,6 @@ public NodeList CreateUkkonen(str s){
 			remainder += 1;	
 		};
 	};	
-	println(remainder);
-	println(activePoint);
 	return nodes;
 }
 
@@ -59,11 +56,9 @@ public NodeList CreateUkkonen(str s){
 */
 public tuple[int, NodeList, Pointer] TraverseTrie(NodeList nodes, Pointer activePoint, str s, int i, int remainder, int iteration = 0){
 	if(s[i] in GetIndex(nodes, activePoint) && s[GetIndexValue(nodes, activePoint, s)[0] + activePoint[2]] == s[i]){
-		println("rem inc");
 		remainder += 1;
 		activePoint[2] += 1;
 	} else {
-		println("else stmt");
 		// insertion
 		nodes = Insert(nodes, activePoint, s, i);
 		remainder -= 1;	
@@ -75,9 +70,7 @@ public tuple[int, NodeList, Pointer] TraverseTrie(NodeList nodes, Pointer active
 		nodes = Rule2(iteration, nodes);
 					
 		// rule 3
-		println("before r3:<activePoint>");
 		activePoint = Rule3(activePoint, nodes);
-		println("after r3: <activePoint>");
 		
 		if(remainder > 1 && activePoint[2] != 0)
 			return TraverseTrie(nodes, activePoint, s, i, remainder, iteration = iteration + 1);
@@ -141,7 +134,7 @@ public bool RemainderEqualsEdge(str s, Pointer activePoint, NodeList nodes, int 
 			remainder
 */
 public Pointer Rule1(Pointer activePoint){
-	if(activePoint[0] == 1){
+	if(activePoint[0] == ROOT){
 		activePoint[1] += 1;
 		activePoint[2] -= 1;
 	}
@@ -171,10 +164,10 @@ public NodeList Rule2(int iteration, NodeList nodes){
 					there is a suffix node to follow
 */
 public Pointer Rule3(Pointer activePoint, NodeList nodes){
-	if(activePoint[0] > 1 && GetSuffixLink(nodes, activePoint) != NONEXISTING_SUFFIX)
+	if(activePoint[0] > ROOT && GetSuffixLink(nodes, activePoint) != NONEXISTING_SUFFIX)
 		activePoint[0] = nodes[activePoint[0]][1];
 	else
-		activePoint[0] = 1;
+		activePoint[0] = ROOT;
 	return activePoint;
 }
 
@@ -186,8 +179,6 @@ public Pointer Rule3(Pointer activePoint, NodeList nodes){
 	Result:	nodes
 */
 public NodeList Branch(NodeList nodes, Pointer activePoint, str s){
-	//println("(<activePoint[0]>, <s[activePoint[1]]>, <activePoint[2]>)");
-	//println("(<nodes[activePoint[0]][0]>");
 	NodeIndex nodeIndex = GetIndex(nodes, activePoint);	
 	nodeIndex[s[activePoint[1]]][1] = activePoint[2];			
 	nodeIndex[s[activePoint[1]]][2] = size(nodes);									
@@ -206,6 +197,6 @@ public NodeList Branch(NodeList nodes, Pointer activePoint, str s){
 public NodeList Insert(NodeList nodes, Pointer activePoint, str s, int i){
 	nodes = Branch(nodes, activePoint, s);		
 	int splitIndex = activePoint[2] + GetIndexValue(nodes, activePoint, s)[0];
-	nodes += <(s[splitIndex] : <splitIndex, CURRENT_END, NO_CHILD>, s[i]:<i, CURRENT_END, NO_CHILD>), NONEXISTING_SUFFIX, activePoint[2]>;
+	nodes += <(s[splitIndex] : <splitIndex, CURRENT_END, NO_CHILD>, s[i]:<i, CURRENT_END, NO_CHILD>), NONEXISTING_SUFFIX>;
 	return nodes;
 }

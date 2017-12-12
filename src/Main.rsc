@@ -48,5 +48,5 @@ private void DetectClones(int cloneType, int projectID, loc outputFile)
 	//CreateTrie("abcabxabcd");
 	//println("Detected clones!");
 	//CreateUkkonen("abcabxabcd");
-	text(CreateUkkonen("abcabxabcd"));
+	println(CreateUkkonen("abcabxabcd"));//abcabxabcd
 }

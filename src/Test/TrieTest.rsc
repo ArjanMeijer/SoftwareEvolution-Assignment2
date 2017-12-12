@@ -4,38 +4,41 @@ import Ukkonen;
 import Nodes;
 
 test bool SimpleCase(){
-	return CreateUkkonen("abc") == [<("":<0,0,1>),-2,0>,<("a":<0,-1,-3>,"b":<1,-1,-3>,"c":<2,-1,-3>),-2,0>];
+	return CreateUkkonen("abc") == [<("a":<0,-1,-3>,"b":<1,-1,-3>,"c":<2,-1,-3>),-2>];
 }
 
 test bool MediumCase(){
 	NodeList result = CreateUkkonen("abcabx");
-	NodeList correct = [<("":<0,0,1>),-2,0>,<("a":<0,2,2>,"b":<1,1,3>,"c":<2,-1,-3>,"x":<5,-1,-3>),-2,0>,<("c":<2,-1,-3>,"x":<5,-1,-3>),3,2>,<("c":<2,-1,-3>,"x":<5,-1,-3>),-2,1>];
+	NodeList correct = [<("a":<0,2,1>,"b":<1,1,2>,"c":<2,-1,-3>,"x":<5,-1,-3>),-2>,<("c":<2,-1,-3>,"x":<5,-1,-3>),2>,<("c":<2,-1,-3>,"x":<5,-1,-3>),-2>];
 	return result == correct;
 }
 
+test bool NormalCase(){
+	return CreateUkkonen("abcabxabcd") == [<("a":<0,2,1>,"b":<1,1,2>,"c":<2,1,5>,"d":<9,-1,-3>,"x":<5,-1,-3>),-2>,<("c":<2,1,3>,"x":<5,-1,-3>),2>,<("c":<2,1,4>,"x":<5,-1,-3>),-2>,<("a":<3,-1,-3>,"d":<9,-1,-3>),4>,<("a":<3,-1,-3>,"d":<9,-1,-3>),5>,<("a":<3,-1,-3>,"d":<9,-1,-3>),-2>];
+}
+
 test bool Rule1Test(){
-	return <1,1,1> == Rule1(<1,0,2>);
+	return <0,1,1> == Rule1(<0,0,2>);
 }
 
 test bool Rule2Test(){
-	return [<("":<0,0,1>), -2,0>,<("a":<0,-1,-3>),2,0>,<("b":<1,-1,-3>),-2,0>] == Rule2(1, [<("":<0,0,1>), -2,0>,<("a":<0,-1,-3>),-2,0>,<("b":<1,-1,-3>),-2,0>]);
+	return [<("a":<0,-1,-3>),1>,<("b":<1,-1,-3>),-2>] == Rule2(1, [<("a":<0,-1,-3>),-2>,<("b":<1,-1,-3>),-2>]);
 }
 
 test bool Rule3Test(){
-	return <3,0,0> == Rule3(<2,0,0>, [<("":<0,0,1>), -2, 0>,<("a":<0,-1,-3>), -2, 0>,<("b":<1,-1,-3>), 3, 0>,<("c":<2,-1,-3>), -2, 0>]);
+	return <2,0,0> == Rule3(<1,0,0>, [<("a":<0,-1,-3>), -2>,<("b":<1,-1,-3>), 2>,<("c":<2,-1,-3>), -2>]);
 }
 
 test bool Branch(){
-	NodeList inputList = [<("":<0,0,1>), -2, 0>, <("a":<0,-1,-3>),-2,0>];
-	Pointer inputPointer = <1,0,2>;
-	NodeList correct = [<("":<0,0,1>), -2, 0>, <("a":<0,2,2>), -2, 0>];
+	NodeList inputList = [<("a":<0,-1,-3>),-2>];
+	Pointer inputPointer = <0,0,2>;
+	NodeList correct = [<("a":<0,2,1>), -2>];
 	return Branch(inputList, inputPointer, "abcd") == correct;
 }
 
 test bool InsertTest(){
-	// [<("":<0,0,1>),-2,0>,<("a":<0,2,2>,"b":<1,1,3>,"c":<2,-1,-3>,"x":<5,-1,-3>),-2,0>,<("c":<2,-1,-3>,"x":<5,-1,-3>),3,2>,<("c":<2,-1,-3>,"x":<5,-1,-3>),-2,1>] ==> error case
-	NodeList inputList = [<("":<0,0,1>), -2, 0>, <("a":<0,-1,-3>),-2,0>];
-	Pointer inputPointer = <1,0,2>;
-	NodeList correct = [<("":<0,0,1>), -2, 0>, <("a":<0,2,2>), -2, 0>,<("c":<2,-1,-3>,"e":<4,-1,-3>), -2, 2>];
+	NodeList inputList = [<("a":<0,-1,-3>),-2>];
+	Pointer inputPointer = <0,0,2>;
+	NodeList correct = [<("a":<0,2,1>), -2>,<("c":<2,-1,-3>,"e":<4,-1,-3>), -2>];
 	return Insert(inputList, inputPointer, "abcdef", 4) == correct;
 }

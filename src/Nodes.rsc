@@ -16,9 +16,8 @@ alias NodeIndex = map[str,tuple[int,int,int]];
 		list relation:
 			NodeIndex
 			suffix link	
-			root index
 */
-alias NodeList = lrel[NodeIndex, int, int];
+alias NodeList = lrel[NodeIndex, int];
 
 
 /* structure: activePoint 
@@ -52,8 +51,4 @@ public tuple[int,int,int] GetIndexValue(NodeList nodes, Pointer activePoint, str
 
 public int GetSuffixLink(NodeList nodes, Pointer activePoint){
 	return nodes[activePoint[0]][1];
-}
-
-public int GetRootIndex(NodeList nodes, Pointer activePoint){
-	return nodes[activePoint[0]][2];
 }
