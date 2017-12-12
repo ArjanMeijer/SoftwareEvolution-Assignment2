@@ -35,6 +35,7 @@ public NodeList CreateUkkonen(str s){
 			};
 			
 		} else {
+			println("passed both");
 			activePoint = UpdateActivePoint(activePoint, i);
 
 			if(GetChild(nodes, activePoint, s) != NO_CHILD && RemainderEqualsEdge(s, activePoint, nodes, i))
@@ -42,6 +43,8 @@ public NodeList CreateUkkonen(str s){
 			remainder += 1;	
 		};
 	};	
+	println(remainder);
+	println(activePoint);
 	return nodes;
 }
 
@@ -56,21 +59,25 @@ public NodeList CreateUkkonen(str s){
 */
 public tuple[int, NodeList, Pointer] TraverseTrie(NodeList nodes, Pointer activePoint, str s, int i, int remainder, int iteration = 0){
 	if(s[i] in GetIndex(nodes, activePoint) && s[GetIndexValue(nodes, activePoint, s)[0] + activePoint[2]] == s[i]){
+		println("rem inc");
 		remainder += 1;
 		activePoint[2] += 1;
 	} else {
+		println("else stmt");
 		// insertion
 		nodes = Insert(nodes, activePoint, s, i);
 		remainder -= 1;	
-				
-		// rule 2
-		nodes = Rule2(iteration, nodes);
-			
-		// rule 3
-		activePoint = Rule3(activePoint, nodes);
 		
 		// rule 1
 		activePoint = Rule1(activePoint);
+				
+		// rule 2
+		nodes = Rule2(iteration, nodes);
+					
+		// rule 3
+		println("before r3:<activePoint>");
+		activePoint = Rule3(activePoint, nodes);
+		println("after r3: <activePoint>");
 		
 		if(remainder > 1 && activePoint[2] != 0)
 			return TraverseTrie(nodes, activePoint, s, i, remainder, iteration = iteration + 1);
