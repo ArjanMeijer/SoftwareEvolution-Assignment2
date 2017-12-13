@@ -56,12 +56,14 @@ private void DetectClones(int cloneType, int projectID, loc outputFile)
 	map[int, str] rIndex = ();
 	map[tuple[int,int],loc] locIndex = ();
 	list[int] values = [];
-	//list[list[str]] input = GetAllLines(project);
+	list[list[str]] input = GetAllLines(project);
 		
 	//list[str] input = readFileLines(testFile);
-	list[list[str]] input = [["a","b","c","a","b","x","a","b","c","d"]];
+	//list[list[str]] input = [["a","b","c","a","b","x","a","b","c","d"]];
 	//
 	//input = [RemoveComments(x) | x <- input];
+	
+	//list[list[str]] input = [readFileLines(|project://CloneDetector/src/Test/TestFiles/testFile.java|)];
 	for(int i <- [0 .. size(input)])
 	{
 		for(int j <- [0 .. size(input[i])]){
@@ -73,26 +75,39 @@ private void DetectClones(int cloneType, int projectID, loc outputFile)
 		}
 	}
 	
-	
-	
 	println("Finished reading");
 	println("Do stuff!");
-	
+	//values += 999;
 	NodeList strie = (CreateUkkonen(values));
+	text(strie);
 	
-	println(values);
-	NodeIndex root = strie[0][0];
+	/*for(tuple[NodeIndex,int] n <- strie){
+		println(n[0]);
+		println("\n");
+	};	
+	*/
+	
+	/*list[list[int]] vals = PrintNode(values, strie[0][0]);
+	list[str] conv = ["0","1","2","3","4","5", "6", "7", "8", "9","a","b","c","d"];
+	println([conv[x] | x <- values]);
+	for(list[int] v <- vals){
+		println([conv[x] | x <- v]);
+		println("\n");
+	};*/
+	//println(strie);
+	//println(values);
+	//NodeIndex root = strie[0][0];
 	
 	//println(strie[0]);
 	//for(tuple[NodeIndex,int] n <- strie)
 	//	println(PrintNode(input, n[0]));	
 	
-	WalkTree(strie, input[0], 0);	
+	//WalkTree(strie, input[0], 0);	
 	
 }
 
-public list[list[str]] PrintNode(list[str] input, NodeIndex n) { 
-	list[list[str]] result = [];
+public list[list[int]] PrintNode(list[int] input, NodeIndex n) { 
+	list[list[int]] result = [];
 	
 	for(x <- n){
 		int s = n[x][0];

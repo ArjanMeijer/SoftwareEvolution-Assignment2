@@ -5,6 +5,7 @@ import IO;
 import String;
 import List;
 import Map;
+import Exception;
 
 // Contains logic to read from nodes
 import Nodes;
@@ -25,7 +26,7 @@ public NodeList CreateUkkonen(list[int] input){
 	{
 		if(input[i] notin GetIndex(nodes, activePoint))
 		{
-			nodes = Add(nodes, activePoint, i, CURRENT_END, input[i], NO_CHILD);	
+			nodes = Add(nodes, activePoint, i, CURRENT_END, input[i], NO_CHILD);//, ob = true);	
 					
 			if(remainder > 1 && activePoint[2] > 0){		
 				tuple[int, NodeList, Pointer] traversed = TraverseTrie(nodes, activePoint, input, i, remainder);
@@ -58,12 +59,12 @@ public tuple[int, NodeList, Pointer] TraverseTrie(NodeList nodes, Pointer active
 	//println("Travese input: <activePoint>");
 	//println("<values[i]> in <GetIndex(nodes, activePoint)>");
 	//println("<activePoint> - <values[i] in GetIndex(nodes, activePoint)>");
-	if(values[i] in GetIndex(nodes, activePoint) && values[GetIndexValue(nodes, activePoint, values)[0] + activePoint[2]] == values[i]){
+	if(values[activePoint[1]] in GetIndex(nodes, activePoint) && values[GetIndexValue(nodes, activePoint, values)[0] + activePoint[2]] == values[i]){
 		remainder += 1;
 		activePoint[2] += 1;
 	} else {
 		// insertion
-		println("<GetIndex(nodes, activePoint)> - <activePoint> - <i> - <values[i]>");
+		//println("<GetIndex(nodes, activePoint)> - <activePoint> - <i> - <values[i]>");
 		nodes = Insert(nodes, activePoint, values, i);
 		remainder -= 1;	
 		
@@ -94,8 +95,8 @@ public tuple[int, NodeList, Pointer] TraverseTrie(NodeList nodes, Pointer active
 			index of child node
 	Returns: nodes
 */
-public NodeList Add(NodeList nodes, Pointer activePoint, int s, int e, int id, int childIndex){
-	if (activePoint[2] == 0)
+public NodeList Add(NodeList nodes, Pointer activePoint, int s, int e, int id, int childIndex, bool ob = false){
+	if (activePoint[2] == 0 || ob)
 		nodes[activePoint[0]][0] += (id:<s,e,childIndex>);
 	return nodes;
 }
@@ -200,8 +201,10 @@ public NodeList Branch(NodeList nodes, Pointer activePoint, list[int] values){
 	Result:	nodes
 */
 public NodeList Insert(NodeList nodes, Pointer activePoint, list[int] values, int i){
-	nodes = Branch(nodes, activePoint, values);		
-	int splitIndex = activePoint[2] + GetIndexValue(nodes, activePoint, values)[0];
-	nodes += <(values[splitIndex] : <splitIndex, CURRENT_END, NO_CHILD>, values[i]:<i, CURRENT_END, NO_CHILD>), NONEXISTING_SUFFIX>;
-	return nodes;
+	try{
+		nodes = Branch(nodes, activePoint, values);		
+		int splitIndex = activePoint[2] + GetIndexValue(nodes, activePoint, values)[0];
+		nodes += <(values[splitIndex] : <splitIndex, CURRENT_END, NO_CHILD>, values[i]:<i, CURRENT_END, NO_CHILD>), NONEXISTING_SUFFIX>;
+		return nodes;
+	} catch : return nodes;
 }

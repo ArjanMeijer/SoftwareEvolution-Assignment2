@@ -35,11 +35,6 @@ public int GetChild(NodeList nodes, Pointer activePoint, list[int] index)
 	return GetIndex(nodes, activePoint)[index[activePoint[1]]][2];
 }
 
-/*public bool Contains(NodeList nodes, tuple[int,int,int] activePoint, str character)
-{
-	return character notin nodes[activePoint[0]][0];
-}*/
-
 public NodeIndex GetIndex(NodeList nodes, Pointer activePoint){
 	return nodes[activePoint[0]][0];
 }

@@ -24,4 +24,5 @@ public class TestClass {
 		int f = 6;
 		int g = 7;
 	}
+
 }
