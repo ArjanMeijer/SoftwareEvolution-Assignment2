@@ -48,7 +48,7 @@ public void main(list[str] args) {
 
 private void DetectClones(int cloneType, int projectID, loc outputFile)
 {
-	//loc project = [|project://smallsql0.21_src|,|project://hsqldb-2.3.1|][projectID];
+	loc project = [|project://smallsql0.21_src|,|project://hsqldb-2.3.1|][projectID];
 	//CreateTrie("abcabxabcd");
 	//println("Detected clones!");
 	//CreateUkkonen("abcabxabcd");
@@ -56,21 +56,21 @@ private void DetectClones(int cloneType, int projectID, loc outputFile)
 	map[int, str] rIndex = ();
 	map[tuple[int,int],loc] locIndex = ();
 	list[int] values = [];
-	//list[str] input = GetAllLines(|project://hsqldb-2.3.1|);
-	
-	loc testFile = |project://CloneDetector/src/Test/TestFiles/testFile2.java|;
-	
+	//list[list[str]] input = GetAllLines(project);
+		
 	//list[str] input = readFileLines(testFile);
-	list[str] input = ["a","b","c","a","b","x","a","b","c","d"];
-	
-	input = [RemoveComments(x) | x <- input];
+	list[list[str]] input = [["a","b","c","a","b","x","a","b","c","d"]];
+	//
+	//input = [RemoveComments(x) | x <- input];
 	for(int i <- [0 .. size(input)])
 	{
-		if(input[i] notin index){
-			index += (input[i]:size(index));
-			rIndex += (index[input[i]]:input[i]);
+		for(int j <- [0 .. size(input[i])]){
+			if(input[i][j] notin index){
+				index += (input[i][j]:size(index));
+				rIndex += (index[input[i][j]]:input[i][j]);
+			}
+			values += index[input[i][j]];
 		}
-		values += index[input[i]];
 	}
 	
 	
@@ -87,7 +87,7 @@ private void DetectClones(int cloneType, int projectID, loc outputFile)
 	//for(tuple[NodeIndex,int] n <- strie)
 	//	println(PrintNode(input, n[0]));	
 	
-	WalkTree(strie, input, 0);	
+	WalkTree(strie, input[0], 0);	
 	
 }
 

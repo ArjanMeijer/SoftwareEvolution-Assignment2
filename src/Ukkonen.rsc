@@ -27,7 +27,7 @@ public NodeList CreateUkkonen(list[int] input){
 		{
 			nodes = Add(nodes, activePoint, i, CURRENT_END, input[i], NO_CHILD);	
 					
-			if(remainder > 1){		
+			if(remainder > 1 && activePoint[2] > 0){		
 				tuple[int, NodeList, Pointer] traversed = TraverseTrie(nodes, activePoint, input, i, remainder);
 				remainder = traversed[0];
 				nodes = traversed[1];
@@ -55,11 +55,15 @@ public NodeList CreateUkkonen(list[int] input){
 			current iteration
 */
 public tuple[int, NodeList, Pointer] TraverseTrie(NodeList nodes, Pointer activePoint, list[int] values, int i, int remainder, int iteration = 0){
+	//println("Travese input: <activePoint>");
+	//println("<values[i]> in <GetIndex(nodes, activePoint)>");
+	//println("<activePoint> - <values[i] in GetIndex(nodes, activePoint)>");
 	if(values[i] in GetIndex(nodes, activePoint) && values[GetIndexValue(nodes, activePoint, values)[0] + activePoint[2]] == values[i]){
 		remainder += 1;
 		activePoint[2] += 1;
 	} else {
 		// insertion
+		println("<GetIndex(nodes, activePoint)> - <activePoint> - <i> - <values[i]>");
 		nodes = Insert(nodes, activePoint, values, i);
 		remainder -= 1;	
 		
@@ -176,6 +180,11 @@ public Pointer Rule3(Pointer activePoint, NodeList nodes){
 */
 public NodeList Branch(NodeList nodes, Pointer activePoint, list[int] values){
 	NodeIndex nodeIndex = GetIndex(nodes, activePoint);	
+	println(nodeIndex);
+	println(activePoint);
+	println(values[activePoint[1]]);
+	println([values[x] | x <- [0..activePoint[1]]]);
+	
 	nodeIndex[values[activePoint[1]]][1] = activePoint[2];			
 	nodeIndex[values[activePoint[1]]][2] = size(nodes);									
 	nodes[activePoint[0]][0] = nodeIndex;

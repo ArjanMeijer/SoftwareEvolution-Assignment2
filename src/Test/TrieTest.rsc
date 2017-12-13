@@ -4,12 +4,12 @@ import Ukkonen;
 import Nodes;
 
 test bool SimpleCase(){
-	return CreateUkkonen("abc") == [<("a":<0,-1,-3>,"b":<1,-1,-3>,"c":<2,-1,-3>),-2>];
+	return CreateUkkonen([0,1,2]) == [<(0:<0,-1,-3>,1:<1,-1,-3>,2:<2,-1,-3>),-2>];
 }
 
 test bool MediumCase(){
-	NodeList result = CreateUkkonen("abcabx");
-	NodeList correct = [<("a":<0,2,1>,"b":<1,1,2>,"c":<2,-1,-3>,"x":<5,-1,-3>),-2>,<("c":<2,-1,-3>,"x":<5,-1,-3>),2>,<("c":<2,-1,-3>,"x":<5,-1,-3>),-2>];
+	NodeList result = CreateUkkonen([0,1,2,3,0,1,4]);//"abcabx");
+	NodeList correct = [<(0:<0,2,1>,1:<1,1,2>,2:<2,-1,-3>,4:<5,-1,-3>),-2>,<(2:<2,-1,-3>,4:<5,-1,-3>),2>,<(2:<2,-1,-3>,4:<5,-1,-3>),-2>];
 	return result == correct;
 }
 

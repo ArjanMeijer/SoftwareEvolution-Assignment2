@@ -4,11 +4,10 @@ import String;
 import List;
 import IO;
 
-public str RemoveComments(str line){
+public tuple[str,int] RemoveComments(str line){
 	bool isString = false;
 	bool isComment = false;
 	bool isMComment = false;
-	bool add = true;
 	str result = "";
 	str lastChar = "";
 	str lastAdded = "";
@@ -17,7 +16,6 @@ public str RemoveComments(str line){
 	int lines = 1;
 	for(int index <- [0 .. size(line)]){
 		str c = line[index];
-		
 		// Toggle string
 		if(c == "\"" && !isComment)
 			isString = !isString;
@@ -40,23 +38,21 @@ public str RemoveComments(str line){
 				isMComment = false;
 				skip = 2;
 			};
-		
-			if((lastAdded == "\n" || (lastAdded == "" && skip == 0)) && lastChar == "\n")
-				skip += 1;
-			 
-			// Add character to result
-			if(!isComment && !isMComment && skip == 0 && lastChar != "\t" && lastChar != "\r")
-				add = true;
-			else if(skip > 0)
-				skip -= 1;
 		};
 		
-		if(add){
+		if((lastAdded == "\n" || (lastAdded == "" && skip == 0)) && lastChar == "\n")
+			skip += 1;
+		 
+		// Add character to result
+		if(!isComment && !isMComment && skip == 0 && lastChar != "\t" && lastChar != "\r")
+		{
 			lastAdded = lastChar;
 			result += lastChar;
 			if(lastChar == "\n")
-					lines += 1;
+				lines += 1;
 		}
+		else if(skip > 0)
+			skip -= 1;
 		
 		// Update Last value
 		lastChar = c;
@@ -69,5 +65,5 @@ public str RemoveComments(str line){
 		if(lastChar == "\n")
 			lines += 1;
 	}
-	return result;
+	return <result, lines>;
 }
