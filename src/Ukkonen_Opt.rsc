@@ -1,4 +1,4 @@
-module Ukkonen
+module Ukkonen_Opt
 
 import util::ValueUI;
 import IO;
@@ -57,8 +57,10 @@ public NodeList CreateUkkonen(list[int] input, list[list[str]] raw, map[int,str]
 			LOG("\tDid not contain - <activePoint>");
 			
 			nodes = Add(nodes, activePoint, i, CURRENT_END, input[i], NO_CHILD);	
-			if(input[i] notin nodes[0][0])
-				nodes = Add(nodes, <0,0,0>, i, CURRENT_END, input[i], NO_CHILD);
+			
+			/*if(input[i] notin nodes[0][0])
+				nodes = Add(nodes, <0,0,0>, i, CURRENT_END, input[i], NO_CHILD);*/
+				
 			if(remainder > 1 || (activePoint[0] != 0 && input[i] notin nodes[0][0])){		
 				tuple[int, NodeList, Pointer] traversed = TraverseTrie(nodes, activePoint, input, i, remainder);
 				remainder = traversed[0];

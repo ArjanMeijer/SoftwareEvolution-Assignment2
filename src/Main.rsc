@@ -54,7 +54,7 @@ private void DetectClones(int cloneType, int projectID, loc outputFile)
 	//println("Detected clones!");
 	//CreateUkkonen("abcabxabcd");
 
-	//list[list[str]] input = GetAllLines(project) + [["$"]];
+	list[list[str]] input = GetAllLines(project) + [["$"]];
 	
 	/*list[str] alph = split("","abcdefghijklmnopqrstuvwxyz1234567890");
 	for(x <- [0..4000]){
@@ -67,7 +67,7 @@ private void DetectClones(int cloneType, int projectID, loc outputFile)
 			print(s);
 		println("");
 		list[list[str]] input = [res];*/
-		list[list[str]] input = [split("","okgf2oaq3zihmj8k8oo7sokz3i98za$")];
+		//list[list[str]] input = [split("","okgf2oaq3zihmj8k8oo7sokz3i98za$")];
 		
 		map[str,int] index = ();
 		map[int, str] rIndex = ();
