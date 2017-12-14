@@ -10,6 +10,7 @@ import Exception;
 // Contains logic to read from nodes
 import Nodes;
 
+bool DOLOG = true;
 
 private void PrintPaths(list[int] values, map[int,str] rIndex, NodeIndex n, NodeList l, int currentEnd, bool isStart = true, list[str] prev = []){
 	if(isStart)
@@ -24,7 +25,8 @@ private void PrintPaths(list[int] values, map[int,str] rIndex, NodeIndex n, Node
 }
 
 private void LOG(value v){
-	//println("<v>");
+	if(DOLOG)
+		println("<v>");
 }
 
 /* Static declarations */
@@ -66,6 +68,11 @@ public NodeList CreateUkkonen(list[int] input, list[list[str]] raw, map[int,str]
 				remainder = traversed[0];
 				nodes = traversed[1];
 				activePoint = traversed[2];
+				if(input[activePoint[1]] notin nodes[activePoint[0]][0])
+				{
+					nodes = Add(nodes, <0,0,0>, activePoint[1], CURRENT_END, input[activePoint[1]], NO_CHILD);
+					activePoint = <0,0,0>;
+				};
 			};
 			
 		} else {
@@ -91,8 +98,9 @@ public NodeList CreateUkkonen(list[int] input, list[list[str]] raw, map[int,str]
 				LOG("Went to node:<activePoint>");	
 			}
 		};
+		if(DOLOG)
+			PrintPaths(input, rIndex, nodes[0][0], nodes, i);
 		LOG("\n");
-		//PrintPaths(input, rIndex, nodes[0][0], nodes, i);
 		
 		if(remainder == 0)
 			remainder = 1;
@@ -110,9 +118,9 @@ public NodeList CreateUkkonen(list[int] input, list[list[str]] raw, map[int,str]
 			current iteration
 */
 public tuple[int, NodeList, Pointer] TraverseTrie(NodeList nodes, Pointer activePoint, list[int] values, int i, int remainder, int iteration = 0){
-	LOG("IN TRAVERSE");	
-	LOG(activePoint);
-	LOG(values);
+	//LOG("IN TRAVERSE");	
+	//LOG(activePoint);
+	//LOG(values);
 	if((activePoint[2] != 0 || activePoint[0] == 0) && activePoint[1] + activePoint[2] < size(values) - 1 && values[activePoint[1]] in GetIndex(nodes, activePoint) && values[GetIndexValue(nodes, activePoint, values)[0] + activePoint[2]] == values[activePoint[1] + activePoint[2]]){
 		remainder += 1;
 		activePoint[2] += 1;
@@ -133,24 +141,10 @@ public tuple[int, NodeList, Pointer] TraverseTrie(NodeList nodes, Pointer active
 			return TraverseTrie(nodes, activePoint, values, i, remainder, iteration = iteration + 1);
 		LOG("\t\tAddingInTrie:<activePoint>");
 		activePoint = <0,i,1>;
-		
-		
-		/*//LOG("<values[activePoint[1]] in GetIndex(nodes, activePoint)> && <GetChild(nodes, activePoint, values) != NO_CHILD> && <RemainderEqualsEdge(values, activePoint, nodes)>");
-		if(values[activePoint[1]] in GetIndex(nodes, activePoint) && GetChild(nodes, activePoint, values) != NO_CHILD && RemainderEqualsEdge(values, activePoint, nodes))
-		{
-			activePoint = <GetChild(nodes, activePoint, values),0,0>;
-			//remainder = 1;
-			LOG("Went to node IN-T:<activePoint>");	
-		}*/
-	
-		
-		
-		
-		
-		
+
 		remainder = 1;
-		if(values[i] notin GetIndex(nodes, activePoint))
-			nodes = Add(nodes, activePoint, i, CURRENT_END, values[i], NO_CHILD);
+		//if(values[i] notin GetIndex(nodes, activePoint))
+		//	nodes = Add(nodes, activePoint, i, CURRENT_END, values[i], NO_CHILD);
 		
 		LOG("\t\tRemainder <remainder>");
 		LOG("\t\tActivePoint<activePoint>");
@@ -192,10 +186,9 @@ public tuple[int, NodeList, Pointer] TraverseTrie(NodeList nodes, Pointer active
 	Returns: nodes
 */
 public NodeList Add(NodeList nodes, Pointer activePoint, int s, int e, int id, int childIndex){
-	if (activePoint[2] == 0)
-	{
+	if (activePoint[2] == 0){
 		nodes[activePoint[0]][0] += (id:<s,e,childIndex>);
-		LOG("nodes is now:<nodes>");
+		LOG("\tAdded value!");	
 	}
 	return nodes;
 }
@@ -306,16 +299,28 @@ public tuple[NodeList,tuple[int,int]] Branch(NodeList nodes, Pointer activePoint
 	Result:	nodes
 */
 public NodeList Insert(NodeList nodes, Pointer activePoint, list[int] values, int i){
-	LOG("\t\t\tInserting at <activePoint> with <i>");
-	tuple[NodeList, tuple[int,int]] branchResult = Branch(nodes, activePoint, values);		
-	nodes = branchResult[0];
+
+	if(values[activePoint[1]] notin nodes[activePoint[0]][0]){
+		LOG("\t\t\tNot included case");
+		LOG("\t\t\t\t<values[activePoint[1]]>");
+		LOG("\t\t\t\t<nodes[activePoint[0]][0]>");
+		return nodes;
+	}
 	int splitIndex = activePoint[2] + GetIndexValue(nodes, activePoint, values)[0];
-	
-	// This holds since the closing character can't appear anywhere else in the input
-	// Therefore, the i + 1 case is valid, there can be no event in which i == $ && activePoint[1] == $
 	int newEdge = i;
 	if(activePoint[1] + activePoint[2] - 1 == i)
 		newEdge += 1;
+	
+	if(values[splitIndex] == values[newEdge])
+		return nodes;
+
+	LOG("\t\t\tInserting at <activePoint> with <i>");
+	tuple[NodeList, tuple[int,int]] branchResult = Branch(nodes, activePoint, values);		
+	nodes = branchResult[0];
+	
+	// This holds since the closing character can't appear anywhere else in the input
+	// Therefore, the i + 1 case is valid, there can be no event in which i == $ && activePoint[1] == $
+
 	
 	nodes += <(values[splitIndex] : <splitIndex, branchResult[1][0], branchResult[1][1]>, values[newEdge]:<newEdge, CURRENT_END, NO_CHILD>), NONEXISTING_SUFFIX>;
 	LOG(nodes[0]);

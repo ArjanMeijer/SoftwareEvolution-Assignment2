@@ -7,7 +7,7 @@ import Exception;			// Try Catch
 import util::ValueUI;
 
 import STrie;
-import Ukkonen;
+import Ukkonen_Opt;
 import Map;
 import Tools::Reader;
 import Tools::CodeParser;
@@ -47,80 +47,47 @@ public void main(list[str] args) {
 	}*/
 }
 
-private void DetectClones(int cloneType, int projectID, loc outputFile)
-{
-	loc project = [|project://smallsql0.21_src|,|project://hsqldb-2.3.1|][projectID];
-	//CreateTrie("abcabxabcd");
-	//println("Detected clones!");
-	//CreateUkkonen("abcabxabcd");
-
-	list[list[str]] input = GetAllLines(project) + [["$"]];
+private void RunDetection(list[list[str]] input){
+	map[str,int] index = ();
+	map[int, str] rIndex = ();
+	map[tuple[int,int],loc] locIndex = ();
+	list[int] values = [];
 	
-	/*list[str] alph = split("","abcdefghijklmnopqrstuvwxyz1234567890");
-	for(x <- [0..4000]){
+	for(int i <- [0 .. size(input)])
+		for(int j <- [0 .. size(input[i])]){
+			if(input[i][j] notin index){
+				index += (input[i][j]:size(index));
+				rIndex += (index[input[i][j]]:input[i][j]);
+			}
+			values += index[input[i][j]];
+		}
+	println("Finished reading");
+	NodeList strie = CreateUkkonen(values, input, rIndex);
+}
+
+private void BFTest(int a, int l){
+	list[str] alph = split("","abcdefghijklmnopqrstuvwxyz1234567890");
+	for(x <- [0..a]){
 		list[str] res = [];
-		for(i <- [0..30]){
+		for(i <- [0..l]){
 			res += [alph[arbInt(size(alph))]];
 		};
 		res += "$";
 		for(str s <- res)
 			print(s);
 		println("");
-		list[list[str]] input = [res];*/
-		//list[list[str]] input = [split("","abcabxabcd$")];
-		
-		map[str,int] index = ();
-		map[int, str] rIndex = ();
-		map[tuple[int,int],loc] locIndex = ();
-		list[int] values = [];
-			
-		//list[str] input = readFileLines(testFile);
-		//list[list[str]] input = [["a","b","c","a","b","x","a","b","c","d"]];
-		//
-		//input = [RemoveComments(x) | x <- input];
-		//list[list[str]] input = [["a","b","c","d","e","f","g","h","i","j","a","b","c","d","e","f","g","i","k","a","b","c","d","e","f","g","h","i","l","i"]];
-		//list[list[str]] input = [split("","ababcdefghijklmnop$")];//fgkg
-		//list[list[str]] input = [[trim(x) | x <- readFileLines(|project://CloneDetector/src/Test/TestFiles/testFile.java|)]] + [["$"]];
-		for(int i <- [0 .. size(input)])
-			for(int j <- [0 .. size(input[i])]){
-				if(input[i][j] notin index){
-					index += (input[i][j]:size(index));
-					rIndex += (index[input[i][j]]:input[i][j]);
-				}
-				values += index[input[i][j]];
-			}
-		//println(rIndex[values[25115]]);
-		println("Finished reading");
-		//println("Do stuff!");
-		//values += 999;
-		NodeList strie = CreateUkkonen(values, input, rIndex);
-		//PrintPaths(values, rIndex, strie[0][0], strie);
- 	//};
-	
-	//text(strie);
-	/*for(tuple[NodeIndex,int] n <- strie){
-		println(n[0]);
-		println("\n");
-	};	
-	*/
-	
-	/*list[list[int]] vals = PrintNode(values, strie[0][0]);
-	list[str] conv = ["0","1","2","3","4","5", "6", "7", "8", "9","a","b","c","d"];
-	println([conv[x] | x <- values]);
-	for(list[int] v <- vals){
-		println([conv[x] | x <- v]);
-		println("\n");
-	};*/
-	//println(strie);
-	//println(values);
-	//NodeIndex root = strie[0][0];
-	
-	//println(strie[0]);
-	//for(tuple[NodeIndex,int] n <- strie)
-	//	println(PrintNode(input, n[0]));	
-	
-	//WalkTree(strie, input[0], 0);	
-	
+		list[list[str]] input = [res];
+		RunDetection(input);
+	};
+}
+
+private void DetectClones(int cloneType, int projectID, loc outputFile)
+{
+	loc project = [|project://smallsql0.21_src|,|project://hsqldb-2.3.1|][projectID];
+	//BFTest(9999999, 50);
+	//9zh84h8vr5t1n6f8bz8j0jg7cvlgsvmos1djs33r4qfhqhb8sl
+	RunDetection([split("","1qtz4wvuz6z66byxjdxqwzuz3slkphil0qnu3nal3iyf2xvq9c$")]);
+	//list[list[str]] input = [[trim(x) | x <- readFileLines(|project://CloneDetector/src/Test/TestFiles/testFile.java|)]] + [["$"]];	
 }
 
 private int PrintChar(str c){
