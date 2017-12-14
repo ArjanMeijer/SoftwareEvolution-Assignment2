@@ -12,6 +12,7 @@ import Map;
 import Tools::Reader;
 import Tools::CodeParser;
 import Nodes;
+import util::Math;
 
 // To run this application from the console you should use this command:
 //		java -Xmx1G -Xss32m -jar libs/rascal-shell-stable.jar Main.rsc 0 1 C:/user/meije/test.txt
@@ -52,34 +53,51 @@ private void DetectClones(int cloneType, int projectID, loc outputFile)
 	//CreateTrie("abcabxabcd");
 	//println("Detected clones!");
 	//CreateUkkonen("abcabxabcd");
-	map[str,int] index = ();
-	map[int, str] rIndex = ();
-	map[tuple[int,int],loc] locIndex = ();
-	list[int] values = [];
-	//list[list[str]] input = GetAllLines(project);
-		
-	//list[str] input = readFileLines(testFile);
-	//list[list[str]] input = [["a","b","c","a","b","x","a","b","c","d"]];
-	//
-	//input = [RemoveComments(x) | x <- input];
-	//list[list[str]] input = [["a","b","c","d","e","f","g","h","i","j","a","b","c","d","e","f","g","i","k","a","b","c","d","e","f","g","h","i","l","i"]];
-	list[list[str]] input = [split("","abcdefghijabcdc$")];
-	//list[list[str]] input = [[trim(x) | x <- readFileLines(|project://CloneDetector/src/Test/TestFiles/testFile.java|)]];
-	for(int i <- [0 .. size(input)])
-		for(int j <- [0 .. size(input[i])]){
-			if(input[i][j] notin index){
-				index += (input[i][j]:size(index));
-				rIndex += (index[input[i][j]]:input[i][j]);
-			}
-			values += index[input[i][j]];
-		}
+
+	//list[list[str]] input = GetAllLines(project) + [["$"]];
 	
-	println("Finished reading");
-	println("Do stuff!");
-	//values += 999;
-	NodeList strie = (CreateUkkonen(values));
+	/*list[str] alph = split("","abcdefghijklmnopqrstuvwxyz1234567890");
+	for(x <- [0..4000]){
+		list[str] res = [];
+		for(i <- [0..30]){
+			res += [alph[arbInt(size(alph))]];
+		};
+		res += "$";
+		for(str s <- res)
+			print(s);
+		println("");
+		list[list[str]] input = [res];*/
+		list[list[str]] input = [split("","okgf2oaq3zihmj8k8oo7sokz3i98za$")];
+		
+		map[str,int] index = ();
+		map[int, str] rIndex = ();
+		map[tuple[int,int],loc] locIndex = ();
+		list[int] values = [];
+			
+		//list[str] input = readFileLines(testFile);
+		//list[list[str]] input = [["a","b","c","a","b","x","a","b","c","d"]];
+		//
+		//input = [RemoveComments(x) | x <- input];
+		//list[list[str]] input = [["a","b","c","d","e","f","g","h","i","j","a","b","c","d","e","f","g","i","k","a","b","c","d","e","f","g","h","i","l","i"]];
+		//list[list[str]] input = [split("","ababcdefghijklmnop$")];//fgkg
+		//list[list[str]] input = [[trim(x) | x <- readFileLines(|project://CloneDetector/src/Test/TestFiles/testFile.java|)]] + [["$"]];
+		for(int i <- [0 .. size(input)])
+			for(int j <- [0 .. size(input[i])]){
+				if(input[i][j] notin index){
+					index += (input[i][j]:size(index));
+					rIndex += (index[input[i][j]]:input[i][j]);
+				}
+				values += index[input[i][j]];
+			}
+		//println(rIndex[values[25115]]);
+		//println("Finished reading");
+		//println("Do stuff!");
+		//values += 999;
+		NodeList strie = CreateUkkonen(values, input, rIndex);
+		//PrintPaths(values, rIndex, strie[0][0], strie);
+ 	//};
+	
 	//text(strie);
-	PrintPaths(values, rIndex, strie[0][0], strie);
 	/*for(tuple[NodeIndex,int] n <- strie){
 		println(n[0]);
 		println("\n");
@@ -103,18 +121,6 @@ private void DetectClones(int cloneType, int projectID, loc outputFile)
 	
 	//WalkTree(strie, input[0], 0);	
 	
-}
-
-private void PrintPaths(list[int] values, map[int,str] rIndex, NodeIndex n, NodeList l, bool isStart = true, list[str] prev = []){
-	if(isStart)
-		println("Results:");
-	for(int key <- n){
-		list[str] p = [rIndex[values[x]] | x <- [n[key][0] .. n[key][1] == -1 ? size(values) : n[key][0] + n[key][1]]];
-		if(n[key][2] >= 0)
-			PrintPaths(values, rIndex, l[n[key][2]][0], l, isStart = false, prev = prev + p);
-		else
-			println("\t<prev + p>");
-	};
 }
 
 private int PrintChar(str c){
