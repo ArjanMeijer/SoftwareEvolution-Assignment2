@@ -24,7 +24,7 @@ import util::Math;
 //  2) Output file location
 public void main(list[str] args) {
 	println("Clone Detector by Arjan Meijer and Niels Boerkamp");
-	DetectClones(0,0,|home:///henk|);
+	DetectClones(0,1,|home:///henk|);
 	/*	
 	bool isValidInput = true;
 	if(size(args) == 3){
@@ -67,7 +67,7 @@ private void DetectClones(int cloneType, int projectID, loc outputFile)
 			print(s);
 		println("");
 		list[list[str]] input = [res];*/
-		//list[list[str]] input = [split("","okgf2oaq3zihmj8k8oo7sokz3i98za$")];
+		//list[list[str]] input = [split("","abcabxabcd$")];
 		
 		map[str,int] index = ();
 		map[int, str] rIndex = ();
@@ -90,7 +90,7 @@ private void DetectClones(int cloneType, int projectID, loc outputFile)
 				values += index[input[i][j]];
 			}
 		//println(rIndex[values[25115]]);
-		//println("Finished reading");
+		println("Finished reading");
 		//println("Do stuff!");
 		//values += 999;
 		NodeList strie = CreateUkkonen(values, input, rIndex);

@@ -33,14 +33,14 @@ private void LOG(value v){
 	int NO_CHILD = -3;
 	int ROOT = 0;
 	
-	list[str] aValues = [];//split("","8f2xw9zod1sj4nt$"); //
+	//list[str] aValues = [];//split("","8f2xw9zod1sj4nt$"); //
 	
 public NodeList CreateUkkonen(list[int] input, list[list[str]] raw, map[int,str] rIndex){
-	aValues = [];
+	/*aValues = [];
 	for(int i <- [0..size(raw)])
 		for(int j <- [0..size(raw[i])])
 			if(raw[i][j] notin aValues)
-				aValues += raw[i][j];
+				aValues += raw[i][j];*/
 	NodeList nodes = [<(),NONEXISTING_SUFFIX>];
 	Pointer activePoint = <ROOT,0,0>;
 	
@@ -48,8 +48,7 @@ public NodeList CreateUkkonen(list[int] input, list[list[str]] raw, map[int,str]
 	
 	for(int i <- [0..size(input)])
 	{
-	
-		LOG("Case: <aValues[input[i]]> at index <i> - <input[i]>- <GetIndex(nodes, activePoint)>");
+		//LOG("Case: <aValues[input[i]]> at index <i> - <input[i]>- <GetIndex(nodes, activePoint)>");
 		LOG("\tRemainder: <remainder>");
 		LOG("\tActivePoint: <activePoint>");
 		if(input[i] notin GetIndex(nodes, activePoint))
@@ -71,7 +70,7 @@ public NodeList CreateUkkonen(list[int] input, list[list[str]] raw, map[int,str]
 
 			LOG("\tUpdating active point");
 			activePoint = UpdateActivePoint(activePoint, i);
-			LOG("\tNew active point: <activePoint> - <aValues[input[activePoint[1]]]>");
+			//LOG("\tNew active point: <activePoint> - <aValues[input[activePoint[1]]]>");
 			if(remainder > 1){
 				tuple[int, NodeList, Pointer] traversed = TraverseTrie(nodes, activePoint, input, i, remainder);
 				remainder = traversed[0];
@@ -281,7 +280,7 @@ public Pointer Rule3(Pointer activePoint, NodeList nodes){
 public tuple[NodeList,tuple[int,int]] Branch(NodeList nodes, Pointer activePoint, list[int] values){
 	LOG("\t\t\t\tCreating Branch");
 	NodeIndex nodeIndex = GetIndex(nodes, activePoint);	
-	LOG("\t\t\t\tTarget: <values[activePoint[1]]> - <aValues[values[activePoint[1]]]>");
+	//LOG("\t\t\t\tTarget: <values[activePoint[1]]> - <aValues[values[activePoint[1]]]>");
 	LOG("\t\t\t\t<nodeIndex>");
 	tuple[int,int] cValues = <nodeIndex[values[activePoint[1]]][1], nodeIndex[values[activePoint[1]]][2]>;
 	if(cValues[0] != CURRENT_END){

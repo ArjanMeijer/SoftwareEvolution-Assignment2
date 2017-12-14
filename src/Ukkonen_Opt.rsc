@@ -33,7 +33,7 @@ private void LOG(value v){
 	int NO_CHILD = -3;
 	int ROOT = 0;
 	
-	list[str] aValues = [];//split("","8f2xw9zod1sj4nt$"); //
+	list[str] aValues = [];
 	
 public NodeList CreateUkkonen(list[int] input, list[list[str]] raw, map[int,str] rIndex){
 	aValues = [];
