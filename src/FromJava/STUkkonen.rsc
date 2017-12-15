@@ -7,9 +7,9 @@ import IO;
 import List;
 import String;
 
-data STUkkonen = stUkkonen(int last, STNode root, STNode activeLeaf);
+data STUkkonen = stUkkonen(int last, int root, int activeLeaf);
 
-public STUkkonen NewUkkonen(int l = 0, STNode r = NewNode()){
+public STUkkonen NewUkkonen(int l = 0, int r = NewNode().index){
 	return stUkkonen(l, r, r);
 }
 
@@ -26,60 +26,68 @@ public void put(str key, int index){
 	
 	u.activeLeaf = u.root;
 	str remainder = key;
-	STNode s = u.root;
+	int s = u.root;
 	
 	str text = "";
 	for(int i <- [0..size(remainder)]){
 		str v = remainder[i];
 		text += v;
-		tuple[STNode, str] active = update(s, text, remainder[i..], index);
+		tuple[int, str] active = update(s, text, remainder[i..], index);
 		active = canonize(active[0], active[1]);
 		
 		s = active[0];
 		text = active[1];	
 	};
 	
-	if(u.activeLeaf.suffix == -1 && u.activeLeaf != u.root && u.activeLeaf != s)
-		u.activeLeaf = setSuffix(u.activeLeaf, s);
+	if(NodeIndex[u.activeLeaf].suffix == -1 && u.activeLeaf != u.root && u.activeLeaf != s)
+		setSuffix(u.activeLeaf, s);
 }
 
-private tuple[STNode, str] update(STNode inpNode, str part, str rest, int val){
-	STNode s = inpNode;
+int DBUG = 0;
+
+private tuple[int, str] update(int inpIndex, str part, str rest, int val){
+	println("<inpIndex>-<part>-<rest>-<val>");
+	int s = inpIndex;
 	str temp = part;
 	str newInt = part[size(part) -1];
 	
-	STNode oldRoot = u.root;
+	int oldRoot = u.root;
 	
-	tuple[bool, STNode] ret = testAndSplit(s, temp[0..size(temp)-1], newInt, rest, val);
+	tuple[bool, int] ret = testAndSplit(s, temp[0..size(temp)-1], newInt, rest, val);
 	
 	bool endPoint = ret[0];
-	STNode r = ret[1];
+	int r = ret[1];
 	
-	STNode leaf;
+	int leaf;
 	while(!endPoint){
+		if(DBUG > 10)
+			return <s,"">;
+		
+		DBUG += 1;
 		println("!endpoint");
 		///STEdge tempEdge;// = r.edges.d[newInt];
-		if(newInt in r.edges.dat){
-			leaf = NodeIndex[r.edges.dat[newInt].dest];
+		if(newInt in NodeIndex[r].edges.dat){
+			leaf = NodeIndex[r].edges.dat[newInt].dest;
 		} else {
-			leaf = NewNode();
+			println("adding leaf node");
+			leaf = NewNode().index;
 			addRef(leaf, val);
-			STEdge newEdge = NewEdge(l = rest, d = leaf.index);
-			r = addEdge(r, newInt, newEdge);
+			STEdge newEdge = NewEdge(l = rest, d = leaf);
+			addEdge(r, newInt, newEdge);
 		};
 		
 		if(u.activeLeaf != u.root)
-			u.activeLeaf = setSuffix(u.activeLeaf, leaf);
+			setSuffix(u.activeLeaf, leaf);
 			
 		oldRoot = r;
 		
-		if(s.suffix == -1){
+		if(NodeIndex[s].suffix == -1){
 			if(u.root != s)
 				println("assert was false!!");
 			
 			temp = temp[1..];
 		} else {
-			tuple[STNode, str] canret = canonize(getSuffix(s), temp[0..size(temp) - 1]);
+			tuple[int, str] canret = canonize(getSuffix(s), temp[0..size(temp) - 1]);
 			s = canret[0];
 			temp = canret[1] + temp[size(temp) - 1];
 		};
@@ -90,43 +98,44 @@ private tuple[STNode, str] update(STNode inpNode, str part, str rest, int val){
 	};
 	
 	if(oldRoot != u.root){
-		oldRoot = setSuffix(oldRoot, r);
+		setSuffix(oldRoot, r);
 	}
 	oldRoot = u.root;
 	
 	return <s, temp>;
 }
 
-private tuple[STNode, str] canonize(STNode s, str input)
+private tuple[int, str] canonize(int s, str input)
 {
 	if(size(input) == 0)
 		return <s, input>;
 	
-	STNode currentNode = s;
+	int currentNode = s;
 	str lst = input;
-	if(lst[0] in s.edges.dat) {
+	println("lst:<lst>");
+	if(lst[0] in NodeIndex[s].edges.dat) {
 		STEdge g = getEdge(s, lst[0]);
-		while(lst[0] in s.edges.dat && isStartingWith(lst, g.label)){
+		while(lst[0] in NodeIndex[s].edges.dat && isStartingWith(lst, g.label)){
 			println("canonize");
 			lst = lst[size(g.label)..];
-			currentNode = NodeIndex[g.dest];
-			if(size(lst) > 0 && lst[0] in currentNode.edges.dat)
-				g = currentNode.edges.dat[lst[0]];
+			currentNode = g.dest;
+			if(size(lst) > 0 && lst[0] in NodeIndex[currentNode].edges.dat)
+				g = NodeIndex[currentNode].edges.dat[lst[0]];
 		}; 
 	};
 	
 	return <currentNode, lst>;
 }
 
-private tuple[bool, STNode] testAndSplit(STNode n, str part, str t, str remainder, int val){
+private tuple[bool, int] testAndSplit(int n, str part, str t, str remainder, int val){
 	
-	tuple[STNode, str] ret = canonize(n, part);
-	STNode s = ret[0];
+	tuple[int, str] ret = canonize(n, part);
+	int s = ret[0];
 	str lst = ret[1];
 	
 	if(size(lst) > 0){
 		
-		STEdge g = s.edges.dat[lst[0]];
+		STEdge g = NodeIndex[s].edges.dat[lst[0]];
 		str lbl = g.label;
 		
 		if(size(lbl) > size(lst) && lbl[size(lst)] == t)
@@ -136,20 +145,20 @@ private tuple[bool, STNode] testAndSplit(STNode n, str part, str t, str remainde
 			if(isStartingWith(lbl,lst))
 				println("Assert was true! - in test and split");
 			
-			STNode r = NewNode();
-			STEdge newEdge = NewEdge(l = lst, d = r.index);
+			int r = NewNode().index;
+			STEdge newEdge = NewEdge(l = lst, d = r);
 			g.label = newLabel;
 			
-			r = addEdge(r, newLabel[0], g);
-			s = addEdge(s, lbl[0], newEdge);
+			addEdge(r, newLabel[0], g);
+			addEdge(s, lbl[0], newEdge);
 			
 			println("henk1");
 			return <false, r>;
 		};
 	} else {
 		println("t: <t>");
-		println("<s.edges.dat>");
-		if(t notin s.edges.dat) {
+		//println("<s.edges.dat>");
+		if(t notin NodeIndex[s].edges.dat) {
 				println("henk2");
 			return <false, s>;
 		}
@@ -157,18 +166,18 @@ private tuple[bool, STNode] testAndSplit(STNode n, str part, str t, str remainde
 			STEdge e = getEdge(s,t);
 			if(remainder == e.label)
 			{
-				addRef(NodeIndex[e.dest], val);
+				addRef(e.dest, val);
 				return <true, s>;
 			} else if (isStartingWith(remainder, e.label))
 				return <true, s>;
 			else if (isStartingWith(e.label, remainder)){
-				STNode newNode = NewNode();
+				int newNode = NewNode().index;
 				addRef(newNode, val);
 				
-				STEdge newEdge = NewEdge(l = remainder, d = newNode.index);
+				STEdge newEdge = NewEdge(l = remainder, d = newNode);
 				e.label = e.label[size(remainder)..];
-				newNode = addEdge(newNode, e.label[0], e);
-				s = addEdge(s, t, newEdge);
+				addEdge(newNode, e.label[0], e);
+				addEdge(s, t, newEdge);
 				
 							println("henk3");
 				return <false, s>;

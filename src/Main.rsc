@@ -7,18 +7,18 @@ import Exception;			// Try Catch
 import util::ValueUI;
 import util::Math;
 
-import STrie;
-import Ukkonen_scr;
-import QTest;
+//import STrie;
+//import Ukkonen_scr;
+//import QTest;
 import Map;
 import Tools::Reader;
 import Tools::CodeParser;
 import Nodes;
 import Tools::Exporter;
 import util::Math;
-import FromJava::STUkkonen;
-
-
+//import FromJava::STUkkonen;
+//import FromJava::STNode;
+import FromPython::STSuffixTree;
 
 
 // To run this application from the console you should use this command:
@@ -69,7 +69,7 @@ private void RunDetection(list[list[str]] input){
 			values += index[input[i][j]];
 		}
 	println("Finished reading");
-	NodeList strie = CreateUkkonen(values, input, rIndex);
+	//NodeList strie = // CreateUkkonen(values, input, rIndex);
 }
 
 private void BFTest(int a, int l){
@@ -80,19 +80,20 @@ private void BFTest(int a, int l){
 			res += [alph[arbInt(size(alph))]];
 		};
 		res += "$";
+		str inp = "";
 		for(str s <- res)
-			print(s);
-		println("");
-		list[list[str]] input = [res];
-		RunDetection(input);
+			inp += s;
+		println("<inp>");
+		NewSuffixTree(inp);
+		//list[list[str]] input = [res];
+		//RunDetection(input);
 	};
 }
 
 private void DetectClones(int cloneType, int projectID, loc outputFile)
 {
 	//loc project = [|project://smallsql0.21_src|,|project://hsqldb-2.3.1|][projectID];
-	//BFTest(9999999, 10);
-	//9zh84h8vr5t1n6f8bz8j0jg7cvlgsvmos1djs33r4qfhqhb8sl
+	BFTest(99999, 1);	//9zh84h8vr5t1n6f8bz8j0jg7cvlgsvmos1djs33r4qfhqhb8sl
 	//RunDetection([split("","yk97y78e50cihio$")]);
 	//RunDetection([split("","wxabwxcwxa$")]);
 	//RunDetection([split("","pjpaxrpjp7$")]);
@@ -100,8 +101,10 @@ private void DetectClones(int cloneType, int projectID, loc outputFile)
 	//RunDetection(GetAllLines(project));
 	
 	//STUkkonen ukkonen = NewUkkonen();
-	list[int] vals = [0,1,2]; // abc
+	/*list[int] vals = [0,1,2]; // abc
 	put("c", 0);
+	println(NodeIndex);*/
+	//text(NewSuffixTree("cacaou"));
 }
 
 private int PrintChar(str c){

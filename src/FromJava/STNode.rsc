@@ -41,32 +41,24 @@ public set[int] getData(STNode n, int numElements){
 	return ret;
 }
 
-void addRef(STNode n, int index){
+void addRef(int n, int index){
 	if(contains(n, index))
 		return;
 	
-	n = addIndex(n, index);
+	addIndex(n, index);
 	
-	int iter = n.suffix;
+	int iter = NodeIndex[n].suffix;
 	while(iter != NO_SUFFIX){
 		
-		if(contains(NodeIndex[iter], index))
+		if(contains(iter, index))
 			break;
 		
-		addRef(NodeIndex[iter], index);
+		addRef(iter, index);
 		iter = NodeIndex[iter].suffix;
 	};
 }
 
-bool contains(STNode n, int index){
-	/*int low = 0;
-	int high = n.lastIdx - 1;
-	while(low <= high){
-		int mid = (low + high) / 2; // >>> 2
-		int midVal = n.dat[mid];
-	};*/
-	return index in n.dat;
-}
+bool contains(int n, int index) = index in NodeIndex[n].dat;
 
 int computeAndCacheCount(STNode n){
 	computeAndCacheCountRecursive(n);
@@ -98,31 +90,22 @@ public int getResultCount(STNode n)
 	return n.resultCount;
 }
 
-STNode addEdge(STNode n, str s, STEdge e){
-	n.edges.dat += (s:e);
-	
-	return n;
+void addEdge(int n, str s, STEdge e){
+	NodeIndex[n].edges.dat += (s:e);
 }
 
-STEdge getEdge(STNode n, str s){
-	return n.edges.dat[s];
+STEdge getEdge(int n, str s){
+	return NodeIndex[n].edges.dat[s];
 }
 
-STNode getSuffix(STNode n){
-	return NodeIndex[n.suffix];
+int getSuffix(int n){
+	return NodeIndex[n].suffix;
 }
 
-STNode setSuffix(STNode n, STNode t){
-	n.suffix = t.index;
-	
-	return n;
+void setSuffix(int n, int t){
+	NodeIndex[n].suffix = t;
 }
 
-private STNode addIndex(STNode n, int index){
-	n.dat += [index];
-	
-	return n;
+private void addIndex(int n, int index){
+	NodeIndex[n].dat += [index];
 }
-
-
-
