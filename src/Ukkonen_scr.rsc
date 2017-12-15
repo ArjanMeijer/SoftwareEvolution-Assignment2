@@ -14,7 +14,12 @@ private void PrintPaths(list[int] values, map[int,str] rIndex, NodeIndex n, Node
 		for(int key <- n){
 			list[str] p = [rIndex[values[x]] | x <- [n[key][0] .. n[key][1] == -1 ? currentEnd + 1 : n[key][0] + n[key][1]]];
 			if(n[key][2] >= 0)
-				PrintPaths(values, rIndex, l[n[key][2]][0], l, activePoint, remainder, currentEnd, isStart = false, prev = prev + p + ["-"]);
+			{
+				str s = "-";
+				if(activePoint[0] == n[key][2])
+					s += "!";
+				PrintPaths(values, rIndex, l[n[key][2]][0], l, activePoint, remainder, currentEnd, isStart = false, prev = prev + p + [s]);
+			}
 			else
 				println("\t<prev + p>");
 		};
@@ -39,7 +44,7 @@ public NodeList CreateUkkonen(list[int] values, list[list[str]] raw, map[int,str
 	
 	for(int i <- [0..size(values)]){
 	
-		LOG("\n====== current: <rI[values[i]]> - (<activePoint[0]>, <rI[values[activePoint[1]]]>, <activePoint[2]>)");
+		LOG("\n====== current: <rI[values[i]]> - (<activePoint[0]>, <rI[values[activePoint[1]]]>, <activePoint[2]>) - <remainder>");
 		bool jumpedNode = false;
 		if(values[i] in nodes[activePoint[0]][0]){
 			LOG("in nodes");
@@ -55,31 +60,40 @@ public NodeList CreateUkkonen(list[int] values, list[list[str]] raw, map[int,str
 */
 			
 			
-			
+			LOG("<activePoint> - (<activePoint[0]>, <rI[values[activePoint[1]]]>, <activePoint[2]>) & <remainder>");
+			LOG(nodes[activePoint[0]]);
+			LOG(values[activePoint[1]]);
+			LOG("======");
 			if(activePoint[2] > 0 && nodes[activePoint[0]][0][values[activePoint[1]]][1] == activePoint[2]){
 				activePoint[2] = 0;
 				activePoint[0] = nodes[activePoint[0]][0][values[activePoint[1]]][2];
 				jumpedNode = true;
+				remainder -= 1;
 				LOG("Jumped to <activePoint[0]>");
 			};
 			
-			while(true){
+			while(activePoint[2] > 0){
 				if(values[nodes[activePoint[0]][0][values[activePoint[1]]][0] + activePoint[2] - 1] != values[i])
 				{
-					LOG("not next in line");
-					LOG(nodes[activePoint[0]][0]);
-					LOG(values[activePoint[1]]);
-					LOG(activePoint[2]);
-					LOG("<values[nodes[activePoint[0]][0][values[activePoint[1]]][0] + activePoint[2]]> == <values[i]>");
+					//LOG("not next in line");
+					//LOG(nodes[activePoint[0]][0]);
+					//LOG(values[activePoint[1]]);
+					//LOG(activePoint[2]);
+					//LOG("<values[nodes[activePoint[0]][0][values[activePoint[1]]][0] + activePoint[2]]> == <values[i]>");
+					LOG("reduced activepoint 2");
 					activePoint[2] -= 1;
 					remainder -= 1;
+					LOG("CALL FROM WHILE");
 					nodes = Split(nodes, activePoint, i, values);	
 					activePoint[1] += 1;
-				};
+				}
+				//PrintPaths(values, rI, nodes[0][0], nodes, activePoint, remainder, i);
 				if(activePoint[0] == 0)
 					break;
 				else
 					activePoint = GoDown(nodes, activePoint);
+				
+				//LOG(activePoint);
 			};
 		}; 
 		
@@ -90,6 +104,22 @@ public NodeList CreateUkkonen(list[int] values, list[list[str]] raw, map[int,str
 			{
 				int iteration = 0;
 				while (activePoint[2] != 0){
+					LOG("AP:<activePoint>");
+					LOG("RM:<remainder>");
+					LOG("NL:<nodes[activePoint[0]]>");
+					
+					if(activePoint[2] > 0 && nodes[activePoint[0]][0][values[activePoint[1]]][1] == activePoint[2]){
+						activePoint[2] = 0;
+						activePoint[0] = nodes[activePoint[0]][0][values[activePoint[1]]][2];
+						jumpedNode = true;
+						LOG("WHILE-Jumped to <activePoint[0]>");
+						remainder -= 1;
+						break;
+					};
+					
+					//if(activePoint[2] > 0 && (nodes[activePoint[0]][0][values[activePoint[1]]][1] == -1 || nodes[activePoint[0]][0][values[activePoint[1]]][1] > activePoint[2]))
+					//	break;
+									
 					nodes = Split(nodes, activePoint, i, values);
 					if(iteration > 0)
 					{
@@ -99,8 +129,16 @@ public NodeList CreateUkkonen(list[int] values, list[list[str]] raw, map[int,str
 					remainder -= 1;
 					if(activePoint[0] == 0)
 					{
-						activePoint[1] += 1;
-						activePoint[2] -= 1;
+						LOG("IMA HERO");
+						LOG("(<activePoint[0]>, <rI[values[activePoint[1]]]>, <activePoint[2]>) - <remainder>");
+						//if(remainder > 1){
+						//	activePoint[1] -= remainder;
+							//activePoint[2] = 1;	
+						//}
+						//else{
+							activePoint[1] += 1;
+							activePoint[2] -= 1;
+						//}
 					} else {
 						activePoint = GoDown(nodes, activePoint);
 					};
@@ -128,6 +166,7 @@ private Pointer GoDown(NodeList nodes, Pointer activePoint){
 	{
 		activePoint[0] = 0;
 	} else {
+		LOG("== FOLLOWING SUFFIX LINK ==");
 		activePoint[0] = nodes[activePoint[0]][1];
 	};
 	return activePoint;

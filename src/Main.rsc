@@ -8,11 +8,13 @@ import util::ValueUI;
 
 import STrie;
 import Ukkonen_scr;
+import QTest;
 import Map;
 import Tools::Reader;
 import Tools::CodeParser;
 import Nodes;
 import util::Math;
+import FromJava::STUkkonen;
 
 // To run this application from the console you should use this command:
 //		java -Xmx1G -Xss32m -jar libs/rascal-shell-stable.jar Main.rsc 0 1 C:/user/meije/test.txt
@@ -62,7 +64,8 @@ private void RunDetection(list[list[str]] input){
 			values += index[input[i][j]];
 		}
 	println("Finished reading");
-	NodeList strie = CreateUkkonen(values, input, rIndex);
+	text(cST(values));
+	//NodeList strie = CreateUkkonen(values, input, rIndex);
 }
 
 private void BFTest(int a, int l){
@@ -83,11 +86,17 @@ private void BFTest(int a, int l){
 
 private void DetectClones(int cloneType, int projectID, loc outputFile)
 {
-	loc project = [|project://smallsql0.21_src|,|project://hsqldb-2.3.1|][projectID];
-	//BFTest(9999999, 15);
+	//loc project = [|project://smallsql0.21_src|,|project://hsqldb-2.3.1|][projectID];
+	//BFTest(9999999, 10);
 	//9zh84h8vr5t1n6f8bz8j0jg7cvlgsvmos1djs33r4qfhqhb8sl
-	RunDetection([split("","wukyjsjncm1na6n$")]);
+	//RunDetection([split("","wxabwxcwxa$")]);
+	//RunDetection([split("","pjpaxrpjp7$")]);
 	//list[list[str]] input = [[trim(x) | x <- readFileLines(|project://CloneDetector/src/Test/TestFiles/testFile.java|)]] + [["$"]];	
+	//RunDetection(GetAllLines(project));
+	
+	STUkkonen ukkonen = NewUkkonen();
+	list[int] vals = [0,1,2]; // abc
+	put(ukkonen, "c", 0);
 }
 
 private int PrintChar(str c){
