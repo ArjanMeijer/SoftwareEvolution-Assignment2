@@ -69,6 +69,7 @@ private void RunDetection(list[list[str]] input){
 			values += index[input[i][j]];
 		}
 	println("Finished reading");
+	NewSuffixTree(values);
 	//NodeList strie = // CreateUkkonen(values, input, rIndex);
 }
 
@@ -84,16 +85,15 @@ private void BFTest(int a, int l){
 		for(str s <- res)
 			inp += s;
 		println("<inp>");
-		NewSuffixTree(inp);
-		//list[list[str]] input = [res];
-		//RunDetection(input);
+		RunDetection([res]);
 	};
 }
 
 private void DetectClones(int cloneType, int projectID, loc outputFile)
 {
 	//loc project = [|project://smallsql0.21_src|,|project://hsqldb-2.3.1|][projectID];
-	BFTest(99999, 1);	//9zh84h8vr5t1n6f8bz8j0jg7cvlgsvmos1djs33r4qfhqhb8sl
+	BFTest(9999999, 10);
+	//9zh84h8vr5t1n6f8bz8j0jg7cvlgsvmos1djs33r4qfhqhb8sl
 	//RunDetection([split("","yk97y78e50cihio$")]);
 	//RunDetection([split("","wxabwxcwxa$")]);
 	//RunDetection([split("","pjpaxrpjp7$")]);

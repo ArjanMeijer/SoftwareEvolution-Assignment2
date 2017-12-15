@@ -6,9 +6,9 @@ import FromPython::STEdge;
 import String;
 import List;
 
-data STSuffixTree = stSuffixTree(str total, int n, list[STNode] nodes, map[tuple[int,str],STEdge] edges, STSuffix active);
+data STSuffixTree = stSuffixTree(list[int] total, int n, list[STNode] nodes, map[tuple[int,int],STEdge] edges, STSuffix active);
 
-public STSuffixTree NewSuffixTree(str t, int n = size(t) - 1, list[STNode] nodes = [NewNode()], map[tuple[int,str],STEdge] edges = (), STSuffix active = NewSuffix(0,0,-1)){
+public STSuffixTree NewSuffixTree(list[int] t, int n = size(t) - 1, list[STNode] nodes = [NewNode()], map[tuple[int,int],STEdge] edges = (), STSuffix active = NewSuffix(0,0,-1)){
 	STSuffixTree tree = stSuffixTree(t, n, nodes, edges, active);
 	
 	for(int i <- [0..size(tree.total)])
