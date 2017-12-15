@@ -57,23 +57,20 @@ public void main(list[str] args) {
 
 private void RunDetection(list[list[str]] input){
 	map[str,int] index = ();
-	map[int, str] rIndex = ();
-	map[tuple[int,int],loc] locIndex = ();
 	list[int] values = [];
 	
 	for(int i <- [0 .. size(input)])
 		for(int j <- [0 .. size(input[i])]){
-			if(input[i][j] notin index){
+			if(input[i][j] notin index)
 				index += (input[i][j]:size(index));
-				rIndex += (index[input[i][j]]:input[i][j]);
-			}
 			values += index[input[i][j]];
 		}
 	println("Finished reading");
+	map[int, str] rIndex = (index[x]:x|x <- index);
 	index = ();
+	
 	//PrintTree(NewSuffixTree(values).edges, rIndex, values);
 	NewSuffixTree(values);
-	//NodeList strie = // CreateUkkonen(values, input, rIndex);
 }
 
 private void BFTest(int a, int l){
