@@ -45,7 +45,7 @@ void addRef(STNode n, int index){
 	if(contains(n, index))
 		return;
 	
-	addIndex(n, index);
+	n = addIndex(n, index);
 	
 	int iter = n.suffix;
 	while(iter != NO_SUFFIX){
@@ -98,8 +98,10 @@ public int getResultCount(STNode n)
 	return n.resultCount;
 }
 
-void addEdge(STNode n, str s, STEdge e){
+STNode addEdge(STNode n, str s, STEdge e){
 	n.edges.dat += (s:e);
+	
+	return n;
 }
 
 STEdge getEdge(STNode n, str s){
@@ -110,12 +112,16 @@ STNode getSuffix(STNode n){
 	return NodeIndex[n.suffix];
 }
 
-void setSuffix(STNode n, STNode t){
+STNode setSuffix(STNode n, STNode t){
 	n.suffix = t.index;
+	
+	return n;
 }
 
-private void addIndex(STNode n, int index){
+private STNode addIndex(STNode n, int index){
 	n.dat += [index];
+	
+	return n;
 }
 
 

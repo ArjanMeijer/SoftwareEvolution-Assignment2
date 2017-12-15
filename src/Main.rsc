@@ -93,15 +93,15 @@ private void DetectClones(int cloneType, int projectID, loc outputFile)
 	//loc project = [|project://smallsql0.21_src|,|project://hsqldb-2.3.1|][projectID];
 	//BFTest(9999999, 10);
 	//9zh84h8vr5t1n6f8bz8j0jg7cvlgsvmos1djs33r4qfhqhb8sl
-	RunDetection([split("","yk97y78e50cihio$")]);
+	//RunDetection([split("","yk97y78e50cihio$")]);
 	//RunDetection([split("","wxabwxcwxa$")]);
 	//RunDetection([split("","pjpaxrpjp7$")]);
 	//list[list[str]] input = [[trim(x) | x <- readFileLines(|project://CloneDetector/src/Test/TestFiles/testFile.java|)]] + [["$"]];	
 	//RunDetection(GetAllLines(project));
 	
-	STUkkonen ukkonen = NewUkkonen();
+	//STUkkonen ukkonen = NewUkkonen();
 	list[int] vals = [0,1,2]; // abc
-	put(ukkonen, "c", 0);
+	put("c", 0);
 }
 
 private int PrintChar(str c){
