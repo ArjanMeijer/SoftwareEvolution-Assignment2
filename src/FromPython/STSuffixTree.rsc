@@ -1,3 +1,5 @@
+//https://github.com/kvh/Python-Suffix-Tree/blob/master/suffix_tree.py -- inspiration
+
 module FromPython::STSuffixTree
 
 import FromPython::STNode;
@@ -5,10 +7,11 @@ import FromPython::STSuffix;
 import FromPython::STEdge;
 import String;
 import List;
+import Map;
 
-data STSuffixTree = stSuffixTree(list[int] total, int n, list[STNode] nodes, map[tuple[int,int],STEdge] edges, STSuffix active);
+data STSuffixTree = stSuffixTree(list[int] total, int n, list[STNode] nodes, map[int, map[int,STEdge]] edges, STSuffix active);
 
-public STSuffixTree NewSuffixTree(list[int] t, int n = size(t) - 1, list[STNode] nodes = [NewNode()], map[tuple[int,int],STEdge] edges = (), STSuffix active = NewSuffix(0,0,-1)){
+public STSuffixTree NewSuffixTree(list[int] t, int n = size(t) - 1, list[STNode] nodes = [NewNode()], map[int, map[int,STEdge]] edges = (), STSuffix active = NewSuffix(0,0,-1)){
 	STSuffixTree tree = stSuffixTree(t, n, nodes, edges, active);
 	
 	for(int i <- [0..size(tree.total)])
@@ -24,10 +27,10 @@ public STSuffixTree AddPrefix(STSuffixTree tree, int lastCharIndex){
 		parentNode = tree.active.sourceNodeIndex;
 		
 		if(Explicit(tree.active)){
-			if(<tree.active.sourceNodeIndex, tree.total[lastCharIndex]> in tree.edges)
+			if(tree.active.sourceNodeIndex in tree.edges && tree.total[lastCharIndex] in tree.edges[tree.active.sourceNodeIndex])
 				break;
 		} else {
-			STEdge e = tree.edges[<tree.active.sourceNodeIndex, tree.total[tree.active.firstCharIndex]>];
+			STEdge e = tree.edges[tree.active.sourceNodeIndex][tree.total[tree.active.firstCharIndex]];
 			if(tree.total[e.firstCharIndex + GetLength(tree.active) + 1] == tree.total[lastCharIndex])
 				break;
 			tuple[int,STSuffixTree] splitRes = SplitEdge(tree, e, tree.active);
@@ -61,12 +64,16 @@ public STSuffixTree AddPrefix(STSuffixTree tree, int lastCharIndex){
 }
 
 public STSuffixTree InsertEdge(STSuffixTree tree, STEdge edge){
-	tree.edges += (<edge.sourceNodeIndex, tree.total[edge.firstCharIndex]>:edge);
+	if(edge.sourceNodeIndex notin tree.edges)
+		tree.edges += (edge.sourceNodeIndex:());
+	tree.edges[edge.sourceNodeIndex] += (tree.total[edge.firstCharIndex]:edge);
 	return tree;
 }
 
 public STSuffixTree RemoveEdge(STSuffixTree tree, STEdge edge){
-	tree.edges -= (<edge.sourceNodeIndex, tree.total[edge.firstCharIndex]>:edge);
+	tree.edges[edge.sourceNodeIndex] -=  (tree.total[edge.firstCharIndex]:edge);
+	if(size(tree.edges[edge.sourceNodeIndex]) == 0)
+		tree.edges -= (edge.sourceNodeIndex:());
 	return tree;
 }
 
@@ -86,7 +93,7 @@ public tuple[int, STSuffixTree] SplitEdge(STSuffixTree tree, STEdge edge, STSuff
 public STSuffix CanonizeSuffix(STSuffixTree tree, STSuffix suffix){
 	if(!Explicit(suffix))
 	{
-		STEdge e = tree.edges[<suffix.sourceNodeIndex, tree.total[suffix.firstCharIndex]>];
+		STEdge e = tree.edges[suffix.sourceNodeIndex][tree.total[suffix.firstCharIndex]];
 		if(GetLength(e) <= GetLength(suffix))
 		{
 			suffix.firstCharIndex += GetLength(e) + 1;

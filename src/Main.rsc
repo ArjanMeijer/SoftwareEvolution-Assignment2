@@ -19,6 +19,7 @@ import util::Math;
 //import FromJava::STUkkonen;
 //import FromJava::STNode;
 import FromPython::STSuffixTree;
+import FromPython::STEdge;
 
 
 // To run this application from the console you should use this command:
@@ -69,6 +70,8 @@ private void RunDetection(list[list[str]] input){
 			values += index[input[i][j]];
 		}
 	println("Finished reading");
+	index = ();
+	//PrintTree(NewSuffixTree(values).edges, rIndex, values);
 	NewSuffixTree(values);
 	//NodeList strie = // CreateUkkonen(values, input, rIndex);
 }
@@ -89,22 +92,24 @@ private void BFTest(int a, int l){
 	};
 }
 
+private void PrintTree(map[int,map[int,STEdge]] tree, map[int, str] rIndex, list[int] values, int n = 0, list[str] prev = []){
+	for(int key <- tree[n])
+	{
+		list[str] p = [rIndex[values[x]] | x <- [tree[n][key].firstCharIndex .. tree[n][key].lastCharIndex + 1]];
+		if(tree[n][key].destNodeIndex in tree){
+			PrintTree(tree, rIndex, values, n = tree[n][key].destNodeIndex, prev = prev + p + ["-"]);
+		} else {
+			println(prev + p);
+		};
+	};
+}
+
 private void DetectClones(int cloneType, int projectID, loc outputFile)
 {
-	//loc project = [|project://smallsql0.21_src|,|project://hsqldb-2.3.1|][projectID];
-	BFTest(9999999, 10);
-	//9zh84h8vr5t1n6f8bz8j0jg7cvlgsvmos1djs33r4qfhqhb8sl
-	//RunDetection([split("","yk97y78e50cihio$")]);
-	//RunDetection([split("","wxabwxcwxa$")]);
-	//RunDetection([split("","pjpaxrpjp7$")]);
-	//list[list[str]] input = [[trim(x) | x <- readFileLines(|project://CloneDetector/src/Test/TestFiles/testFile.java|)]] + [["$"]];	
-	//RunDetection(GetAllLines(project));
-	
-	//STUkkonen ukkonen = NewUkkonen();
-	/*list[int] vals = [0,1,2]; // abc
-	put("c", 0);
-	println(NodeIndex);*/
-	//text(NewSuffixTree("cacaou"));
+	loc project = [|project://smallsql0.21_src|,|project://hsqldb-2.3.1|][projectID];
+	//BFTest(9999999, 1000);
+	//RunDetection([split("","abcabxabcd$")]);
+	RunDetection(GetAllLines(project) + [["$"]]);
 }
 
 private int PrintChar(str c){
