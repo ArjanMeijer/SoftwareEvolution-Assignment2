@@ -7,7 +7,7 @@ import Exception;			// Try Catch
 import util::ValueUI;
 
 import STrie;
-import Ukkonen_Opt;
+import Ukkonen_scr;
 import Map;
 import Tools::Reader;
 import Tools::CodeParser;
@@ -84,9 +84,9 @@ private void BFTest(int a, int l){
 private void DetectClones(int cloneType, int projectID, loc outputFile)
 {
 	loc project = [|project://smallsql0.21_src|,|project://hsqldb-2.3.1|][projectID];
-	//BFTest(9999999, 50);
+	//BFTest(9999999, 15);
 	//9zh84h8vr5t1n6f8bz8j0jg7cvlgsvmos1djs33r4qfhqhb8sl
-	RunDetection([split("","1qtz4wvuz6z66byxjdxqwzuz3slkphil0qnu3nal3iyf2xvq9c$")]);
+	RunDetection([split("","wukyjsjncm1na6n$")]);
 	//list[list[str]] input = [[trim(x) | x <- readFileLines(|project://CloneDetector/src/Test/TestFiles/testFile.java|)]] + [["$"]];	
 }
 

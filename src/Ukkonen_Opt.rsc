@@ -10,18 +10,20 @@ import Exception;
 // Contains logic to read from nodes
 import Nodes;
 
-bool DOLOG = true;
+bool DOLOG = false;
 
-private void PrintPaths(list[int] values, map[int,str] rIndex, NodeIndex n, NodeList l, int currentEnd, bool isStart = true, list[str] prev = []){
-	if(isStart)
-		println("Results:");
-	for(int key <- n){
-		list[str] p = [rIndex[values[x]] | x <- [n[key][0] .. n[key][1] == -1 ? currentEnd + 1 : n[key][0] + n[key][1]]];
-		if(n[key][2] >= 0)
-			PrintPaths(values, rIndex, l[n[key][2]][0], l, currentEnd, isStart = false, prev = prev + p + ["-"]);
-		else
-			println("\t<prev + p>");
-	};
+private void PrintPaths(list[int] values, map[int,str] rIndex, NodeIndex n, NodeList l, Pointer activePoint, int remainder, int currentEnd, bool isStart = true, list[str] prev = []){
+	if(DOLOG){
+		if(isStart)
+			println("Results:<activePoint> - <remainder>");
+		for(int key <- n){
+			list[str] p = [rIndex[values[x]] | x <- [n[key][0] .. n[key][1] == -1 ? currentEnd + 1 : n[key][0] + n[key][1]]];
+			if(n[key][2] >= 0)
+				PrintPaths(values, rIndex, l[n[key][2]][0], l, activePoint, remainder, currentEnd, isStart = false, prev = prev + p + ["-"]);
+			else
+				println("\t<prev + p>");
+		};
+	}
 }
 
 private void LOG(value v){
@@ -36,8 +38,10 @@ private void LOG(value v){
 	int ROOT = 0;
 	
 	list[str] aValues = [];
+	map[int,str] rIndex = ();
 	
-public NodeList CreateUkkonen(list[int] input, list[list[str]] raw, map[int,str] rIndex){
+public NodeList CreateUkkonen(list[int] input, list[list[str]] raw, map[int,str] rI){
+	rIndex = rI;
 	aValues = [];
 	for(int i <- [0..size(raw)])
 		for(int j <- [0..size(raw[i])])
@@ -77,9 +81,16 @@ public NodeList CreateUkkonen(list[int] input, list[list[str]] raw, map[int,str]
 			
 		} else {
 			LOG("\tDid contain");
-
+			LOG(nodes[activePoint[0]][0]);
 			LOG("\tUpdating active point");
 			activePoint = UpdateActivePoint(activePoint, i);
+			
+			if(input[i] == input[i-1]){
+				remainder += 1;
+				activePoint[2] -= 1;
+			};
+			
+			
 			LOG("\tNew active point: <activePoint> - <aValues[input[activePoint[1]]]>");
 			if(remainder > 1){
 				tuple[int, NodeList, Pointer] traversed = TraverseTrie(nodes, activePoint, input, i, remainder);
@@ -89,6 +100,7 @@ public NodeList CreateUkkonen(list[int] input, list[list[str]] raw, map[int,str]
 			} else {
 				remainder += 1;
 			};
+						//activePoint = UpdateActivePoint(activePoint, i);
 			
 
 			if(input[activePoint[1]] in GetIndex(nodes, activePoint) && GetChild(nodes, activePoint, input) != NO_CHILD && RemainderEqualsEdge(input, activePoint, nodes))
@@ -99,7 +111,7 @@ public NodeList CreateUkkonen(list[int] input, list[list[str]] raw, map[int,str]
 			}
 		};
 		if(DOLOG)
-			PrintPaths(input, rIndex, nodes[0][0], nodes, i);
+			PrintPaths(input, rIndex, nodes[0][0], nodes, activePoint, remainder, i);
 		LOG("\n");
 		
 		if(remainder == 0)
@@ -156,18 +168,20 @@ public tuple[int, NodeList, Pointer] TraverseTrie(NodeList nodes, Pointer active
 		
 		LOG("\t\tRemainder: <remainder>");
 		
-		// rule 1
-		activePoint = Rule1(activePoint);
-				
-		// rule 2
-		nodes = Rule2(iteration, nodes);
+		if(values[i] != values[i-1]){
+			// rule 1
+			activePoint = Rule1(activePoint);
 					
-		// rule 3
-		activePoint = Rule3(activePoint, nodes);
+			// rule 2
+			nodes = Rule2(iteration, nodes);
+						
+			// rule 3
+			activePoint = Rule3(activePoint, nodes);
+		}
 		
 		LOG("\t\tActivePoint: <activePoint>");
 		
-		if((remainder > 1 && activePoint[2] != 0) || (values[activePoint[1]] in nodes[activePoint[0]][0]))
+		if((remainder > 1 && activePoint[2] != 0))
 			return TraverseTrie(nodes, activePoint, values, i, remainder, iteration = iteration + 1);
 		else if(activePoint[1] == i && values[activePoint[1]] notin nodes[activePoint[0]][0])
 			nodes = Add(nodes, activePoint, activePoint[1], CURRENT_END, values[activePoint[1]], NO_CHILD);
@@ -201,10 +215,9 @@ public NodeList Add(NodeList nodes, Pointer activePoint, int s, int e, int id, i
 */
 public Pointer UpdateActivePoint(Pointer activePoint, int i){
 	if(activePoint[2] == 0)
-	{
 		activePoint[1] = i;
-		activePoint[2] += 1;
-	}
+
+	activePoint[2] += 1;
 	return activePoint;
 }
 
@@ -273,21 +286,41 @@ public Pointer Rule3(Pointer activePoint, NodeList nodes){
 			string
 	Result:	nodes
 */
-public tuple[NodeList,tuple[int,int]] Branch(NodeList nodes, Pointer activePoint, list[int] values){
+public tuple[NodeList,tuple[int,int]] Branch(NodeList nodes, Pointer activePoint, list[int] values, int i){
 	LOG("\t\t\t\tCreating Branch");
+	
 	NodeIndex nodeIndex = GetIndex(nodes, activePoint);	
 	LOG("\t\t\t\tTarget: <values[activePoint[1]]> - <aValues[values[activePoint[1]]]>");
 	LOG("\t\t\t\t<nodeIndex>");
+	
 	tuple[int,int] cValues = <nodeIndex[values[activePoint[1]]][1], nodeIndex[values[activePoint[1]]][2]>;
-	if(cValues[0] != CURRENT_END){
-		cValues[0] -= 1;
-		LOG("DJASFIOFUOAOJDFOIJASDOFJASJSplit inside trie");	
-	}
+	
+	//println("CVAL:<cValues>");
+	//PrintPaths(values, rIndex, nodes[0][0], nodes, i);
+	//if(cValues[0] != CURRENT_END)
+	//	return SplitNode(cValues, nodes, activePoint, nodeIndex, values);
+	//else
+		return <SplitLeaf(nodes, activePoint, nodeIndex, values), cValues>;
+}
+
+
+public NodeList SplitLeaf(NodeList nodes, Pointer activePoint, NodeIndex nodeIndex, list[int] values){
+	LOG("\t\t\t\t\tSplitting leaf");
 	nodeIndex[values[activePoint[1]]][1] = activePoint[2];			
 	nodeIndex[values[activePoint[1]]][2] = size(nodes);
-	LOG("\t\t\t\t<nodeIndex>");									
 	nodes[activePoint[0]][0] = nodeIndex;
-	return <nodes, cValues>;
+	LOG("\t\t\t\t\t<nodeIndex>");
+	return nodes;
+}
+
+public tuple[NodeList, tuple[int,int]] SplitNode(tuple[int,int] cValues, NodeList nodes, Pointer activePoint, NodeIndex nodeIndex, list[int] values){
+	LOG("\t\t\t\t\tSplitting node");
+	//cValues[0] -= 1;
+	text(nodes);
+	println(activePoint);
+	println(cValues);
+	
+	//nodeIndex[values[activePoint[1]]][1] = activePoint[2];
 }
 
 /*
@@ -315,7 +348,7 @@ public NodeList Insert(NodeList nodes, Pointer activePoint, list[int] values, in
 		return nodes;
 
 	LOG("\t\t\tInserting at <activePoint> with <i>");
-	tuple[NodeList, tuple[int,int]] branchResult = Branch(nodes, activePoint, values);		
+	tuple[NodeList, tuple[int,int]] branchResult = Branch(nodes, activePoint, values, i);		
 	nodes = branchResult[0];
 	
 	// This holds since the closing character can't appear anywhere else in the input
@@ -323,6 +356,8 @@ public NodeList Insert(NodeList nodes, Pointer activePoint, list[int] values, in
 
 	
 	nodes += <(values[splitIndex] : <splitIndex, branchResult[1][0], branchResult[1][1]>, values[newEdge]:<newEdge, CURRENT_END, NO_CHILD>), NONEXISTING_SUFFIX>;
-	LOG(nodes[0]);
+	LOG("\t\t\tJust added:<nodes[size(nodes)-1]>");
+	LOG("\t\t\tCurrent end: <i>");
+	//LOG(nodes[0]);
 	return nodes;
 }
