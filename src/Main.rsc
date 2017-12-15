@@ -5,6 +5,7 @@ import List; 				// indexOf
 import String; 				// toLocation
 import Exception;			// Try Catch
 import util::ValueUI;
+import util::Math;
 
 import STrie;
 import Ukkonen_scr;
@@ -12,7 +13,10 @@ import Map;
 import Tools::Reader;
 import Tools::CodeParser;
 import Nodes;
-import util::Math;
+import Tools::Exporter;
+
+
+
 
 // To run this application from the console you should use this command:
 //		java -Xmx1G -Xss32m -jar libs/rascal-shell-stable.jar Main.rsc 0 1 C:/user/meije/test.txt
@@ -63,6 +67,9 @@ private void RunDetection(list[list[str]] input){
 		}
 	println("Finished reading");
 	NodeList strie = CreateUkkonen(values, input, rIndex);
+	
+
+	ExportToJSON(strie, rIndex, values);
 }
 
 private void BFTest(int a, int l){
@@ -86,7 +93,7 @@ private void DetectClones(int cloneType, int projectID, loc outputFile)
 	loc project = [|project://smallsql0.21_src|,|project://hsqldb-2.3.1|][projectID];
 	//BFTest(9999999, 15);
 	//9zh84h8vr5t1n6f8bz8j0jg7cvlgsvmos1djs33r4qfhqhb8sl
-	RunDetection([split("","wukyjsjncm1na6n$")]);
+	RunDetection([split("","yk97y78e50cihio$")]);
 	//list[list[str]] input = [[trim(x) | x <- readFileLines(|project://CloneDetector/src/Test/TestFiles/testFile.java|)]] + [["$"]];	
 }
 

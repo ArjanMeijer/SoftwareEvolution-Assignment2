@@ -5,7 +5,7 @@ import List;
 import IO;
 import Map;
 
-bool DOLOG = true;
+bool DOLOG = false;
 
 private void PrintPaths(list[int] values, map[int,str] rIndex, NodeIndex n, NodeList l, Pointer activePoint, int remainder, int currentEnd, bool isStart = true, list[str] prev = []){
 	if(DOLOG){
@@ -117,8 +117,14 @@ public NodeList CreateUkkonen(list[int] values, list[list[str]] raw, map[int,str
 					activePoint = GoDown(nodes, activePoint);
 			};
 		};
-		PrintPaths(values, rI, nodes[0][0], nodes, activePoint, remainder, i);
+
+	DOLOG = true;
+	PrintPaths(values, rI, nodes[0][0], nodes, activePoint, remainder, i);
+	DOLOG = false;
 	};
+	
+
+	
 	
 	return nodes;
 }
