@@ -20,7 +20,7 @@ import util::Math;
 //import FromJava::STNode;
 import FromPython::STSuffixTree;
 import FromPython::STEdge;
-
+import util::Eval;
 
 // To run this application from the console you should use this command:
 //		java -Xmx1G -Xss32m -jar libs/rascal-shell-stable.jar Main.rsc 0 1 C:/user/meije/test.txt
@@ -55,22 +55,50 @@ public void main(list[str] args) {
 	}*/
 }
 
-private void RunDetection(list[list[str]] input){
+private map[int,map[int,STEdge]] RunDetection(tuple[list[list[str]], list[loc]] input, bool writeToFile = true){
+	println("Parsing input");
+	
 	map[str,int] index = ();
 	list[int] values = [];
+	map[int, loc] fileIndex = ();
+	int linesOfCode = 0;
 	
-	for(int i <- [0 .. size(input)])
-		for(int j <- [0 .. size(input[i])]){
-			if(input[i][j] notin index)
-				index += (input[i][j]:size(index));
-			values += index[input[i][j]];
+	// Add closing character 
+	list[list[str]] temp = input[0];
+	temp[size(temp) - 1] += ["$"];
+	input[0] = temp;
+	
+	for(int i <- [0 .. size(input[0])])
+	{
+		for(int j <- [0 .. size(input[0][i])]){
+			if(input[0][i][j] notin index)
+				index += (input[0][i][j]:size(index));
+			values += index[input[0][i][j]];
 		}
-	println("Finished reading");
-	map[int, str] rIndex = (index[x]:x|x <- index);
+		linesOfCode += size(input[0][i]);
+		fileIndex += (linesOfCode:input[1][i]);
+	}
+	println("Finished parsing");
+	
+	// Write reverted index
+	if(writeToFile)
+		WriteIndex((index[x]:x|x <- index));
+	// Clear index
 	index = ();
 	
-	//PrintTree(NewSuffixTree(values).edges, rIndex, values);
-	NewSuffixTree(values);
+	// Write fileindex
+	if(writeToFile)
+		WriteFileIndex(fileIndex);
+	
+	// Clear index
+	fileIndex = ();
+	
+	// Create suffix tree
+	println("Creating suffix tree");
+	STSuffixTree tree = NewSuffixTree(values);
+	
+	// Only return the edges
+	return tree.edges;
 }
 
 private void BFTest(int a, int l){
@@ -85,7 +113,7 @@ private void BFTest(int a, int l){
 		for(str s <- res)
 			inp += s;
 		println("<inp>");
-		RunDetection([res]);
+		RunDetection(<[res],[|temp:///NA|]>, writeToFile = false);
 	};
 }
 
@@ -104,9 +132,10 @@ private void PrintTree(map[int,map[int,STEdge]] tree, map[int, str] rIndex, list
 private void DetectClones(int cloneType, int projectID, loc outputFile)
 {
 	loc project = [|project://smallsql0.21_src|,|project://hsqldb-2.3.1|][projectID];
-	//BFTest(9999999, 1000);
+	//BFTest(9999999, 50);
+	 
 	//RunDetection([split("","abcabxabcd$")]);
-	RunDetection(GetAllLines(project) + [["$"]]);
+	RunDetection(GetAllLines(project));
 }
 
 private int PrintChar(str c){
@@ -139,6 +168,30 @@ public void WalkTree(NodeList strie, list[str] input, int nIndex) {
 	}
 }
 
+
+private void WriteIndex(map[int, str] index){
+	writeFile(|tmp:///CDIndex.txt|, "<index>;");
+}
+
+private void WriteFileIndex(map[int,loc] index){
+	writeFile(|tmp:///CDFileIndex.txt|,"<index>;");
+}
+
+private map[int,str] ReadIndex(){
+	map[int,str] v;
+	try{
+		v = eval(readFile(|tmp:///CDIndex.txt|)).val;
+	} catch: v = ();
+	return v;
+}
+
+private map[int,loc] ReadFileIndex(){
+	map[int,loc] v;
+	try{
+		v = eval(readFile(|tmp:///CDFileIndex.txt|)).val;
+	} catch: v = ();
+	return v;
+}
 
 //{
 //  "files" : ["file1.java", "file2.java", "..."],

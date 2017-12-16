@@ -4,14 +4,14 @@ import String;
 import List;
 import IO;
 
-public tuple[str,int] RemoveComments(str line){
+public list[str] RemoveComments(str line){
 	bool isString = false;
 	bool isComment = false;
 	bool isMComment = false;
 	str result = "";
 	str lastChar = "";
 	str lastAdded = "";
-	
+	list[str] res = [];
 	int skip = 0;
 	int lines = 1;
 	for(int index <- [0 .. size(line)]){
@@ -31,6 +31,8 @@ public tuple[str,int] RemoveComments(str line){
 			// End line comment Check
 			} else if(isComment && lastChar == "\n"){
 				isComment = false;
+				res += result;
+				result = "";
 				skip = 1;
 			// End multilineComment check
 			} else if(isMComment && lastChar == "*" && c == "/")
@@ -47,9 +49,13 @@ public tuple[str,int] RemoveComments(str line){
 		if(!isComment && !isMComment && skip == 0 && lastChar != "\t" && lastChar != "\r")
 		{
 			lastAdded = lastChar;
-			result += lastChar;
+			//result += lastChar;
 			if(lastChar == "\n")
-				lines += 1;
+			{
+				res += result;
+				result = "";	
+			} else
+				result += lastChar;
 		}
 		else if(skip > 0)
 			skip -= 1;
@@ -61,9 +67,13 @@ public tuple[str,int] RemoveComments(str line){
 	// Add last value to result
 	if(!isComment && !isMComment && skip == 0 && lastChar != "\t" && lastChar != "\r")
 	{
-		result += lastChar;
 		if(lastChar == "\n")
-			lines += 1;
+		{
+			res += result;
+			result = "";
+		} else
+			result += lastChar;
+		res += result;
 	}
-	return <result, lines>;
+	return res;
 }
