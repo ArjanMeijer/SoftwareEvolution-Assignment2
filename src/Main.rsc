@@ -22,6 +22,7 @@ import FromPython::STSuffixTree;
 import FromPython::STEdge;
 import util::Eval;
 
+
 // To run this application from the console you should use this command:
 //		java -Xmx1G -Xss32m -jar libs/rascal-shell-stable.jar Main.rsc 0 1 C:/user/meije/test.txt
 // This command assumes the .jar file is placed in the right folder.
@@ -60,7 +61,7 @@ private map[int,map[int,STEdge]] RunDetection(tuple[list[list[str]], list[loc]] 
 	
 	map[str,int] index = ();
 	list[int] values = [];
-	map[int, loc] fileIndex = ();
+	lrel[int, loc] fileIndex = [];
 	int linesOfCode = 0;
 	
 	// Add closing character 
@@ -76,7 +77,7 @@ private map[int,map[int,STEdge]] RunDetection(tuple[list[list[str]], list[loc]] 
 			values += index[input[0][i][j]];
 		}
 		linesOfCode += size(input[0][i]);
-		fileIndex += (linesOfCode:input[1][i]);
+		fileIndex += <linesOfCode, input[1][i]>;
 	}
 	println("Finished parsing");
 	
@@ -87,15 +88,19 @@ private map[int,map[int,STEdge]] RunDetection(tuple[list[list[str]], list[loc]] 
 	index = ();
 	
 	// Write fileindex
-	if(writeToFile)
-		WriteFileIndex(fileIndex);
+	//if(writeToFile)
+	//	WriteFileIndex(fileIndex);
 	
 	// Clear index
-	fileIndex = ();
+	//fileIndex = ();
 	
 	// Create suffix tree
 	println("Creating suffix tree");
 	STSuffixTree tree = NewSuffixTree(values);
+	
+	// Start exporting
+	println("Start exporting");	
+	ExportToJSON(tree.edges, ReadIndex(), values, fileIndex);
 	
 	// Only return the edges
 	return tree.edges;
@@ -135,7 +140,8 @@ private void DetectClones(int cloneType, int projectID, loc outputFile)
 	//BFTest(9999999, 50);
 	 
 	//RunDetection([split("","abcabxabcd$")]);
-	RunDetection(GetAllLines(project));
+	//map[int, STEdge] tree = RunDetection(GetAllLines(project));
+	map[int, map[int, STEdge]] edges = RunDetection(<[split("", "abcabxabcd")], [|temp:///NA|]>, writeToFile=true);
 }
 
 private int PrintChar(str c){
@@ -185,11 +191,14 @@ private map[int,str] ReadIndex(){
 	return v;
 }
 
-private map[int,loc] ReadFileIndex(){
-	map[int,loc] v;
+public list[tuple[int,loc]] ReadFileIndex(){
+	lrel[int,loc] v;
 	try{
 		v = eval(readFile(|tmp:///CDFileIndex.txt|)).val;
-	} catch: v = ();
+			println("blah <v>");
+	} catch: v = [];
+	
+	println(v);
 	return v;
 }
 
