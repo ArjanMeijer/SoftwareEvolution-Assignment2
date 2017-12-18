@@ -33,7 +33,7 @@ import util::Eval;
 //  2) Output file location
 public void main(list[str] args) {
 	println("Clone Detector by Arjan Meijer and Niels Boerkamp");
-	DetectClones(0,1,|home:///henk|);
+	DetectClones(0,0,|home:///henk|);
 	/*	
 	bool isValidInput = true;
 	if(size(args) == 3){
@@ -79,13 +79,14 @@ private map[int,map[int,STEdge]] RunDetection(tuple[list[list[str]], list[loc]] 
 		linesOfCode += size(input[0][i]);
 		fileIndex += <linesOfCode, input[1][i]>;
 	}
+
 	println("Finished parsing");
 	
 	// Write reverted index
-	if(writeToFile)
-		WriteIndex((index[x]:x|x <- index));
+	//if(writeToFile)
+	//	WriteIndex((index[x]:x|x <- index));
 	// Clear index
-	index = ();
+	//index = ();
 	
 	// Write fileindex
 	//if(writeToFile)
@@ -99,8 +100,8 @@ private map[int,map[int,STEdge]] RunDetection(tuple[list[list[str]], list[loc]] 
 	STSuffixTree tree = NewSuffixTree(values);
 	
 	// Start exporting
-	println("Start exporting");	
-	ExportToJSON(tree.edges, ReadIndex(), values, fileIndex);
+	println("Start analyzing");	
+	ExportToJSON(tree.edges, (), values, fileIndex);
 	
 	// Only return the edges
 	return tree.edges;
@@ -140,8 +141,8 @@ private void DetectClones(int cloneType, int projectID, loc outputFile)
 	//BFTest(9999999, 50);
 	 
 	//RunDetection([split("","abcabxabcd$")]);
-	//map[int, STEdge] tree = RunDetection(GetAllLines(project));
-	map[int, map[int, STEdge]] edges = RunDetection(<[split("", "abcabxabcd")], [|temp:///NA|]>, writeToFile=true);
+	RunDetection(GetAllLines(project));
+	//RunDetection(<[split("", "abcabxabcd")], [|temp:///NA|]>, writeToFile=true);
 }
 
 private int PrintChar(str c){
