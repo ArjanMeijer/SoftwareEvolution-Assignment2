@@ -1,4 +1,4 @@
-module FromPython::STSuffix
+module Ukkonen::STSuffix
 
 data STSuffix = stSuffix(int sourceNodeIndex, int firstCharIndex, int lastCharIndex);
 

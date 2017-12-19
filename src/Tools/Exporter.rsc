@@ -6,7 +6,7 @@ import Set;
 import List;
 
 import Nodes;
-import FromPython::STEdge;
+import Ukkonen::STEdge;
 
 alias Edges = map[int, map[int, STEdge]];
 

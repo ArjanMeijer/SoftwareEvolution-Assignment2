@@ -1,4 +1,4 @@
-module FromPython::STNode
+module Ukkonen::STNode
 
 data STNode = stNode(int suffixNode);
 

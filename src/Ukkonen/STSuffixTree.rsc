@@ -1,10 +1,10 @@
 //https://github.com/kvh/Python-Suffix-Tree/blob/master/suffix_tree.py -- inspiration
 
-module FromPython::STSuffixTree
+module Ukkonen::STSuffixTree
 
-import FromPython::STNode;
-import FromPython::STSuffix;
-import FromPython::STEdge;
+import Ukkonen::STNode;
+import Ukkonen::STSuffix;
+import Ukkonen::STEdge;
 import String;
 import List;
 import Map;

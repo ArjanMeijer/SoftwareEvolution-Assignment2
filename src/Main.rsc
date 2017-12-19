@@ -7,24 +7,21 @@ import Exception;			// Try Catch
 import util::ValueUI;
 import util::Math;
 
-//import STrie;
-//import Ukkonen_scr;
-//import QTest;
+
 import Map;
 import Tools::Reader;
 import Tools::CodeParser;
-import Nodes;
+
 import Tools::Exporter;
 import util::Math;
-//import FromJava::STUkkonen;
-//import FromJava::STNode;
-import FromPython::STSuffixTree;
-import FromPython::STEdge;
+
+import Ukkonen::STSuffixTree;
+import Ukkonen::STEdge;
 import util::Eval;
 
 
 // To run this application from the console you should use this command:
-//		java -Xmx1G -Xss32m -jar libs/rascal-shell-stable.jar Main.rsc 0 1 C:/user/meije/test.txt
+//		java -Xmx1G -Xss32m -jar libs/rascal-shell-stable.jar Main.rsc 0
 // This command assumes the .jar file is placed in the right folder.
 
 // Args input:
@@ -33,27 +30,13 @@ import util::Eval;
 //  2) Output file location
 public void main(list[str] args) {
 	println("Clone Detector by Arjan Meijer and Niels Boerkamp");
-	DetectClones(0,0,|home:///henk|);
-	/*	
-	bool isValidInput = true;
-	if(size(args) == 3){
-		int cloneType = indexOf(["0","1","2"], args[0]);
-		int projectID = indexOf(["0","1"], args[1]);
-		loc outputFile;
-		
-		try
-			outputFile = toLocation("file:///<args[2]>");
-		catch : isValidInput = false;
-		
-		if(cloneType != -1 && projectID != -1 && isValidInput)
-			DetectClones(cloneType, projectID, outputFile);	
+	if(size(args) == 1){
+		int project = indexOf(["0","1"], args[0]);
+		if(project != -1)
+			DetectClones(project);	
 	} else {
-		isValidInput = false;
-	};
-	
-	if(!isValidInput){
 		println("invalid input!");
-	}*/
+	}
 }
 
 private map[int,map[int,STEdge]] RunDetection(tuple[list[list[str]], list[loc]] input, bool writeToFile = true){
@@ -135,7 +118,7 @@ private void PrintTree(map[int,map[int,STEdge]] tree, map[int, str] rIndex, list
 	};
 }
 
-private void DetectClones(int cloneType, int projectID, loc outputFile)
+private void DetectClones(int projectID)
 {
 	loc project = [|project://smallsql0.21_src|,|project://hsqldb-2.3.1|][projectID];
 	//BFTest(9999999, 50);
@@ -144,37 +127,6 @@ private void DetectClones(int cloneType, int projectID, loc outputFile)
 	RunDetection(GetAllLines(project));
 	//RunDetection(<[split("", "abcabxabcd")], [|temp:///NA|]>, writeToFile=true);
 }
-
-private int PrintChar(str c){
-	print(c);
-	return 1;
-}
-
-public list[list[int]] PrintNode(list[int] input, NodeIndex n) { 
-	list[list[int]] result = [];
-	
-	for(x <- n){
-		int s = n[x][0];
-		int e = n[x][1];
-		if(e == -1)
-			result += [[input[y]| y <- [s..size(input)]]];
-		else
-			result += [[input[y]| y <- [s..s+e]]];
-	}
-	
-	return result;
-}
-
-public void WalkTree(NodeList strie, list[str] input, int nIndex) {
-	for(int n <- strie[nIndex][0]) {
-		print(input[n]);
-		
-		int childNodeID = strie[nIndex][0][n][2];
-		if(childNodeID > 0)
-			WalkTree(strie, input, childNodeID);	
-	}
-}
-
 
 private void WriteIndex(map[int, str] index){
 	writeFile(|tmp:///CDIndex.txt|, "<index>;");
@@ -202,16 +154,6 @@ public list[tuple[int,loc]] ReadFileIndex(){
 	println(v);
 	return v;
 }
-
-//{
-//  "files" : ["file1.java", "file2.java", "..."],
-//  "occurences" : [[1, 10, 20], [] ], 
-//  "classes" : [[0,1], [1,2]]
-//}
-//
-//class
-//  file1 en file2
-//  [0, start clone, end clone], [1, start clone, end clone]
 
 
 

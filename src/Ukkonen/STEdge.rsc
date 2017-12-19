@@ -1,4 +1,4 @@
-module FromPython::STEdge
+module Ukkonen::STEdge
 
 data STEdge = stEdge(int firstCharIndex, int lastCharIndex, int sourceNodeIndex, int destNodeIndex);
 
