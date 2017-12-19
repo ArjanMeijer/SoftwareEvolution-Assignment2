@@ -116,23 +116,13 @@ public int GetLengthFromRoot(list[STEdge] edges) {
 }
 
 public tuple[int, loc] GetFile(STEdge e) {
-	tuple[int, loc] previousKey;
-
-	bool first = true;
-	for(tuple[int, loc] tupl <- fileIndex) {
-		if(first) {
-			//println(e.firstCharIndex);
-			previousKey = tupl;
-			first = false;
-		}
-		
+	tuple[int, loc] previousKey = fileIndex[0];
+	for(tuple[int, loc] tupl <- fileIndex) {		
 		if(e.firstCharIndex < tupl[0]) {
 			//println("<e.firstCharIndex> \< <tupl[0]>");
 			break;
 		}
-		
-		
-		previousKey = tupl;
+		previousKey = tupl;		
 	}
 	
 	return previousKey;
