@@ -107,9 +107,8 @@ public int GetLengthFromRoot(list[STEdge] edges) {
 }
 
 public void ToJSON(map[int, list[tuple[list[STEdge], tuple[str, list[int]]]]] cloneclasses) {
-	writeFile(|home:///input.js|, "<ToString(cloneclasses)>;");
-	
-	println("File written to: |home:///input.js|");
+	writeFile(|project://CloneDetector/UI/input.js|, "<ToString(cloneclasses)>;");
+	println("File written to: |project://CloneDetector/UI/input.js|");
 }
 
 public str CloneToString(tuple[list[STEdge], tuple[str, list[int]]] clone) {
