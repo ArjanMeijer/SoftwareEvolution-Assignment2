@@ -39,7 +39,7 @@ public void main(list[str] args) {
 	}
 }
 
-private map[int,map[int,STEdge]] RunDetection(tuple[list[list[str]], list[loc]] input, bool writeToFile = true){
+private map[int,map[int,STEdge]] RunDetection(lrel[list[str], loc] input, bool writeToFile = true){
 	println("Parsing input");
 	
 	map[str,int] index = ();
@@ -48,21 +48,20 @@ private map[int,map[int,STEdge]] RunDetection(tuple[list[list[str]], list[loc]] 
 	int linesOfCode = 0;
 	
 	// Add closing character 
-	list[list[str]] temp = input[0];
-	temp[size(temp) - 1] += ["$"];
-	input[0] = temp;
+	tuple[list[str],loc] temp = input[size(input) - 1];
+	temp[0] = temp[0] + "$";
+	input[size(input) -1] = temp;
 	
-	for(int i <- [0 .. size(input[0])])
-	{
-		for(int j <- [0 .. size(input[0][i])]){
-			if(input[0][i][j] notin index)
-				index += (input[0][i][j]:size(index));
-			values += index[input[0][i][j]];
-		}
-		fileIndex += <linesOfCode, input[1][i]>;
-		linesOfCode += size(input[0][i]);
-	}
-
+	for(tuple[list[str], loc] i <- input){
+		fileIndex += <linesOfCode, i[1]>;
+		for(str line <- i[0]){
+			linesOfCode += 1;
+			if(line notin index)
+				index += (line:size(index));
+			values += index[line];
+		};
+	};
+	
 	println("Finished parsing");
 	
 	// Write reverted index
@@ -97,12 +96,11 @@ private void BFTest(int a, int l){
 		for(i <- [0..l]){
 			res += [alph[arbInt(size(alph))]];
 		};
-		res += "$";
 		str inp = "";
 		for(str s <- res)
 			inp += s;
 		println("<inp>");
-		RunDetection(<[res],[|temp:///NA|]>, writeToFile = false);
+		RunDetection([<res,|temp:///NA|>], writeToFile = false);
 	};
 }
 
