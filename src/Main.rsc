@@ -39,26 +39,26 @@ public void main(list[str] args) {
 	}
 }
 
-private map[int,map[int,STEdge]] RunDetection(lrel[list[str], loc] input, bool writeToFile = true){
+private map[int,map[int,STEdge]] RunDetection(lrel[lrel[str,int], loc] input, bool writeToFile = true){
 	println("Parsing input");
 	
 	map[str,int] index = ();
 	list[int] values = [];
-	lrel[int, loc] fileIndex = [];
-	int linesOfCode = 0;
+	map[int,tuple[int,loc]] fileIndex = ();
 	
 	// Add closing character 
-	tuple[list[str],loc] temp = input[size(input) - 1];
-	temp[0] = temp[0] + "$";
+	tuple[lrel[str, int],loc] temp = input[size(input) - 1];
+	temp[0] = temp[0] + <"$",-1>;
 	input[size(input) -1] = temp;
 	
-	for(tuple[list[str], loc] i <- input){
-		fileIndex += <linesOfCode, i[1]>;
-		for(str line <- i[0]){
-			linesOfCode += 1;
-			if(line notin index)
-				index += (line:size(index));
-			values += index[line];
+	int counter = 0;
+	for(tuple[lrel[str,int], loc] i <- input){
+		for(tuple[str,int] line <- i[0]){
+			if(line[0] notin index)
+				index += (line[0]:size(index));
+			values += index[line[0]];
+			fileIndex += (counter:<line[1], i[1]>);
+			counter += 1;
 		};
 	};
 	

@@ -4,17 +4,20 @@ import String;
 import List;
 import IO;
 
-public list[str] RemoveComments(str line){
+public lrel[str,int] RemoveComments(str line){
 	bool isString = false;
 	bool isComment = false;
 	bool isMComment = false;
 	str result = "";
 	str lastChar = "";
 	str lastAdded = "";
-	list[str] res = [];
+	lrel[str, int] res = [];
 	int skip = 0;
-	int lines = 1;
+	int currentLine = 0;
 	for(int index <- [0 .. size(line)]){
+		if(line[index] == "\n")
+			currentLine += 1;
+	
 		str c = line[index];
 		// Toggle string
 		if(c == "\"" && !isComment)
@@ -31,7 +34,7 @@ public list[str] RemoveComments(str line){
 			// End line comment Check
 			} else if(isComment && lastChar == "\n"){
 				isComment = false;
-				res += result;
+				res += <trim(result),currentLine>;
 				result = "";
 				skip = 1;
 			// End multilineComment check
@@ -52,7 +55,7 @@ public list[str] RemoveComments(str line){
 			//result += lastChar;
 			if(lastChar == "\n")
 			{
-				res += result;
+				res += <trim(result), currentLine>;
 				result = "";	
 			} else
 				result += lastChar;
@@ -69,11 +72,11 @@ public list[str] RemoveComments(str line){
 	{
 		if(lastChar == "\n")
 		{
-			res += result;
+			res += <trim(result), currentLine>;
 			result = "";
 		} else
 			result += lastChar;
-		res += result;
+		res += <trim(result), currentLine>;
 	}
 	return res;
 }

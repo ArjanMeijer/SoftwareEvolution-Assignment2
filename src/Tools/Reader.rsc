@@ -7,8 +7,8 @@ import String;
 import List;
 import Set;
 
-public lrel[list[str], loc] GetAllLines(loc project){
+public lrel[lrel[str,int], loc] GetAllLines(loc project){
 	M3 model = createM3FromEclipseProject(project);
 	set[loc] projectFiles = files(model);
-	return [<[trim(y) | y <- RemoveComments(readFile(x))], x> | x <- projectFiles];	
+	return [<[y | y <- RemoveComments(readFile(x))], x> | x <- projectFiles];	
 }

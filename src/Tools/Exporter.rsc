@@ -14,16 +14,17 @@ alias Edges = map[int, map[int, STEdge]];
 
 int MIN_CLONE_LENGTH = 10;
 
-map[int, list[tuple[list[STEdge], tuple[str, int]]]] CloneClasses = (); 	
+map[int, list[tuple[list[STEdge], tuple[str, list[int]]]]] CloneClasses = (); 	
 map[int, list[str]] CloneText = ();
 
-lrel[int, loc] fileIndex = [];
+map[int,tuple[int,loc]] fileIndex = ();
 list[int] values = [];
 
-public void ExportToJSON(Edges edges, map[int, str] rIndex, list[int] values, lrel[int, loc] _fileIndex) {
+public void ExportToJSON(Edges edges, map[int, str] rIndex, list[int] values, map[int,tuple[int,loc]] _fileIndex) {
 	
 	//Assign the local fileIndex and values to the global variables. Also sort the fileIndex.
-	fileIndex = sort(_fileIndex, bool (tuple[int, loc] a, tuple[int, loc] b){ return a[0] < b[0]; });
+	//fileIndex = sort(_fileIndex, bool (tuple[int, loc] a, tuple[int, loc] b){ return a[0] < b[0]; });
+	fileIndex = _fileIndex;
 	values = values;
 	
 	text(fileIndex);
@@ -58,12 +59,12 @@ public void CollectClones(Edges edges) {
 			CollectClonesHelper(edges, key, [edges[0][key]], current = edges[0][key].destNodeIndex);
 } 
 
-public list[str] CloneToText(list[tuple[list[STEdge], tuple[str, int]]] clones, map[int, str] rIndex, list[int] values) {
+public list[str] CloneToText(list[tuple[list[STEdge], tuple[str, list[int]]]] clones, map[int, str] rIndex, list[int] values) {
 	list[str] result = [""];
 	
 	list[STEdge] smallestSubTree = [];
 	int smallestSize = 9999999999;
-	for(tuple[list[STEdge], tuple[str, int]] clone <- clones) {
+	for(tuple[list[STEdge], tuple[str, list[int]]] clone <- clones) {
 		int cloneLength = GetLengthFromRoot(clone[0][0..size(clone[0])-1]);
 		if(cloneLength < smallestSize) {
 			smallestSubTree = clone[0];
@@ -103,12 +104,12 @@ public void CollectClonesHelper(Edges edges, int saveToID, list[STEdge] prev, in
 public void SaveClass(int saveToID, list[STEdge] edges) {
 
 	STEdge leafNode = edges[size(edges) - 1];
-	tuple[int, loc] file = GetFile(leafNode);
-
+	list[int] lineNumbers = [fileIndex[x][0] | x <- [leafNode.firstCharIndex .. leafNode.lastCharIndex + 1]];//GetFile(leafNode);
+	str file = fileIndex[leafNode.firstCharIndex][1].path;
 	if(saveToID notin CloneClasses)
-		CloneClasses += (saveToID: [<edges, <file[1].path, file[0]>>]);
+		CloneClasses += (saveToID: [<edges, <file, lineNumbers>>]);
 	else
-		CloneClasses[saveToID] += [<edges, <file[1].path, file[0]>>];
+		CloneClasses[saveToID] += [<edges, <file, lineNumbers>>];
 }
 
 public int GetLengthFromRoot(list[STEdge] edges) {
@@ -116,7 +117,7 @@ public int GetLengthFromRoot(list[STEdge] edges) {
 }
 
 public tuple[int, loc] GetFile(STEdge e) {
-	tuple[int, loc] previousKey = fileIndex[0];
+	/*tuple[int, loc] previousKey = fileIndex[0];
 	for(tuple[int, loc] tupl <- fileIndex) {		
 		if(e.firstCharIndex < tupl[0]) {
 			//println("<e.firstCharIndex> \< <tupl[0]>");
@@ -125,10 +126,10 @@ public tuple[int, loc] GetFile(STEdge e) {
 		previousKey = tupl;		
 	}
 	
-	return previousKey;
+	return previousKey;*/
 }
 
-public void ToJSON(map[int, list[tuple[list[STEdge], tuple[str, int]]]] cloneclasses) {
+public void ToJSON(map[int, list[tuple[list[STEdge], tuple[str, list[int]]]]] cloneclasses) {
 	writeFile(|home:///input.js|, "<ToString(cloneclasses)>;");
 	
 	println("File written to: |home:///input.js|");
@@ -149,17 +150,17 @@ public tuple[int, int] GetMinMax(list[STEdge] clone, int startLine) {
 	return <occurence.firstCharIndex - startLine, occurence.firstCharIndex - startLine + length>;
 }
 
-public str CloneToString(tuple[list[STEdge], tuple[str, int]] clone) {
-	tuple[int, int] minmax = GetMinMax(clone[0], clone[1][1]);
-	return "[<minmax[0]>, <minmax[1]>, \"<clone[1][0]>\"]";
+public str CloneToString(tuple[list[STEdge], tuple[str, list[int]]] clone) {
+	//tuple[int, int] minmax = GetMinMax(clone[0], clone[1][1]);
+	return "[<clone[1][1][0]>, <clone[1][1][size(clone[1][1]) -1]>, \"<clone[1][0]>\"]";
 }
 
-public str CloneClassToString(int id, list[tuple[list[STEdge], tuple[str, int]]] cloneclass) {
+public str CloneClassToString(int id, list[tuple[list[STEdge], tuple[str, list[int]]]] cloneclass) {
 	
 	//CloneText[id];
 	str result = "\"occurences\": [";
 	
-	for(tuple[list[STEdge], tuple[str, int]] x <- cloneclass) {
+	for(tuple[list[STEdge], tuple[str, list[int]]] x <- cloneclass) {
 		result += "<CloneToString(x)>, ";
 	};
 	
@@ -168,7 +169,7 @@ public str CloneClassToString(int id, list[tuple[list[STEdge], tuple[str, int]]]
 	return result;
 }
 
-public str ToString(map[int, list[tuple[list[STEdge], tuple[str, int]]]] cloneclasses) {
+public str ToString(map[int, list[tuple[list[STEdge], tuple[str, list[int]]]]] cloneclasses) {
 
 	str result = "var RascalResult = [";
 
