@@ -84,7 +84,7 @@ private map[int,map[int,STEdge]] RunDetection(tuple[list[list[str]], list[loc]] 
 	
 	// Start exporting
 	println("Start analyzing");	
-	ExportToJSON(tree.edges, (), values, fileIndex);
+	ExportToJSON(tree.edges, (index[x]:x|x <- index), values, fileIndex);
 	
 	// Only return the edges
 	return tree.edges;

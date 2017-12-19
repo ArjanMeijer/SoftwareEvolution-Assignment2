@@ -5,7 +5,6 @@ import IO;
 import Set;
 import List;
 
-import Nodes;
 import Ukkonen::STEdge;
 
 alias Edges = map[int, map[int, STEdge]];
@@ -61,24 +60,24 @@ public void CollectClones(Edges edges) {
 
 public list[str] CloneToText(list[tuple[list[STEdge], tuple[str, int]]] clones, map[int, str] rIndex, list[int] values) {
 	list[str] result = [""];
-	//
-	//list[STEdge] smallestSubTree = [];
-	//int smallestSize = 9999999999;
-	//for(tuple[list[STEdge], str] clone <- clones) {
-	//	int cloneLength = GetLengthFromRoot(clone[0][0..size(clone[0])-1]);
-	//	if(cloneLength < smallestSize) {
-	//		smallestSubTree = clone[0];
-	//		smallestSize = cloneLength;
-	//	}
-	//}
-	//
-	//for(int x <- [0..size(smallestSubTree) - 1]) {
-	//	STEdge e = smallestSubTree[x];
-	//	for(i <- [e.firstCharIndex..e.lastCharIndex+1]){
-	//		result += rIndex[values[i]];
-	//	};
-	//};
-	//
+	
+	list[STEdge] smallestSubTree = [];
+	int smallestSize = 9999999999;
+	for(tuple[list[STEdge], tuple[str, int]] clone <- clones) {
+		int cloneLength = GetLengthFromRoot(clone[0][0..size(clone[0])-1]);
+		if(cloneLength < smallestSize) {
+			smallestSubTree = clone[0];
+			smallestSize = cloneLength;
+		}
+	}
+	
+	for(int x <- [0..size(smallestSubTree) - 1]) {
+		STEdge e = smallestSubTree[x];
+		for(i <- [e.firstCharIndex..e.lastCharIndex+1]){
+			result += rIndex[values[i]];
+		};
+	};
+	text(rIndex);
 	return result;
 }
 
@@ -161,12 +160,6 @@ public tuple[int, int] GetMinMax(list[STEdge] clone, int startLine) {
 }
 
 public str CloneToString(tuple[list[STEdge], tuple[str, int]] clone) {
-
-	// Remove duplicationas.
-	if(size(toList(toSet(clone[0]))) == 1)
-		return "";
-	
-
 	tuple[int, int] minmax = GetMinMax(clone[0], clone[1][1]);
 	return "[<minmax[0]>, <minmax[1]>, \"<clone[1][0]>\"]";
 }
