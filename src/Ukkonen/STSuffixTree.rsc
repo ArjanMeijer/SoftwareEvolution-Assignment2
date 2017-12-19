@@ -1,4 +1,15 @@
-//https://github.com/kvh/Python-Suffix-Tree/blob/master/suffix_tree.py -- inspiration
+/* 
+	Implementation of the ukkonen algorithm
+		STSuffixTree contains the data type of the tree
+		and functions to construct the tree
+	
+	We used the implementation of Nils Diefenbach (python) and Mark Nelson (C++)
+	for our rascal implementation.
+	
+	Sources:
+		https://github.com/kvh/Python-Suffix-Tree/blob/master/suffix_tree.py	- Nils Diefenbach
+		http://marknelson.us/1996/08/01/suffix-trees/							- Mark Nelson
+*/
 
 module Ukkonen::STSuffixTree
 

@@ -1,11 +1,8 @@
 module Tools::Reader
 
-import Tools::CodeParser;
-import lang::java::jdt::m3::Core;
-import IO;
-import String;
-import List;
-import Set;
+import Tools::CodeParser;			// Remove Comments
+import lang::java::jdt::m3::Core;	// Construct M3
+import IO;							// Readfile
 
 public lrel[lrel[str,int], loc] GetAllLines(loc project){
 	M3 model = createM3FromEclipseProject(project);
