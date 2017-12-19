@@ -59,8 +59,8 @@ private map[int,map[int,STEdge]] RunDetection(tuple[list[list[str]], list[loc]] 
 				index += (input[0][i][j]:size(index));
 			values += index[input[0][i][j]];
 		}
-		linesOfCode += size(input[0][i]);
 		fileIndex += <linesOfCode, input[1][i]>;
+		linesOfCode += size(input[0][i]);
 	}
 
 	println("Finished parsing");
