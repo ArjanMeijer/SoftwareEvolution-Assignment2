@@ -39,8 +39,9 @@ public void main(list[str] args) {
 	}
 }
 
-private map[int,map[int,STEdge]] RunDetection(lrel[lrel[str,int], loc] input, bool writeToFile = true){
-	println("Parsing input");
+public map[int,map[int,STEdge]] RunDetection(lrel[lrel[str,int], loc] input, bool testing = false){
+	if(!testing)
+		println("Parsing input");
 	
 	map[str,int] index = ();
 	list[int] values = [];
@@ -62,45 +63,31 @@ private map[int,map[int,STEdge]] RunDetection(lrel[lrel[str,int], loc] input, bo
 		};
 	};
 	
-	println("Finished parsing");
-	
-	// Write reverted index
-	//if(writeToFile)
-	//	WriteIndex((index[x]:x|x <- index));
-	// Clear index
-	//index = ();
-	
-	// Write fileindex
-	//if(writeToFile)
-	//	WriteFileIndex(fileIndex);
-	
-	// Clear index
-	//fileIndex = ();
-	
+	if(!testing){
+		println("Finished parsing");
+		println("Creating suffix tree");
+	}		
 	// Create suffix tree
-	println("Creating suffix tree");
 	STSuffixTree tree = NewSuffixTree(values);
 	
 	// Start exporting
-	println("Start analyzing");	
-	ExportToJSON(tree.edges, (index[x]:x|x <- index), values, fileIndex);
-	
+	if(!testing) {
+		println("Start analyzing");	
+		ExportToJSON(tree.edges, (index[x]:x|x <- index), values, fileIndex);
+	}
 	// Only return the edges
 	return tree.edges;
 }
 
-private void BFTest(int a, int l){
+public void BFTest(int a, int l){
 	list[str] alph = split("","abcdefghijklmnopqrstuvwxyz1234567890");
 	for(x <- [0..a]){
-		list[str] res = [];
+		lrel[str, int] res = [];
 		for(i <- [0..l]){
-			res += [alph[arbInt(size(alph))]];
+			res += [<alph[arbInt(size(alph))], i>];
 		};
-		str inp = "";
-		for(str s <- res)
-			inp += s;
-		println("<inp>");
-		RunDetection([<res,|temp:///NA|>], writeToFile = false);
+
+		RunDetection([<res,|temp:///NA|>], testing = true);
 	};
 }
 
@@ -119,39 +106,5 @@ private void PrintTree(map[int,map[int,STEdge]] tree, map[int, str] rIndex, list
 private void DetectClones(int projectID)
 {
 	loc project = [|project://smallsql0.21_src|,|project://hsqldb-2.3.1|][projectID];
-	//BFTest(9999999, 50);
-	 
-	//RunDetection([split("","abcabxabcd$")]);
 	RunDetection(GetAllLines(project));
-	//RunDetection(<[split("", "abcabxabcd")], [|temp:///NA|]>, writeToFile=true);
 }
-
-private void WriteIndex(map[int, str] index){
-	writeFile(|tmp:///CDIndex.txt|, "<index>;");
-}
-
-private void WriteFileIndex(map[int,loc] index){
-	writeFile(|tmp:///CDFileIndex.txt|,"<index>;");
-}
-
-private map[int,str] ReadIndex(){
-	map[int,str] v;
-	try{
-		v = eval(readFile(|tmp:///CDIndex.txt|)).val;
-	} catch: v = ();
-	return v;
-}
-
-public list[tuple[int,loc]] ReadFileIndex(){
-	lrel[int,loc] v;
-	try{
-		v = eval(readFile(|tmp:///CDFileIndex.txt|)).val;
-			println("blah <v>");
-	} catch: v = [];
-	
-	println(v);
-	return v;
-}
-
-
-

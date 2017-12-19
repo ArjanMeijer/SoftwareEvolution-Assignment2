@@ -1,44 +1,20 @@
 module Test::TrieTest
 
-import Ukkonen;
-import Nodes;
+import Main;
+import Ukkonen::STEdge;
 
 test bool SimpleCase(){
-	return CreateUkkonen([0,1,2]) == [<(0:<0,-1,-3>,1:<1,-1,-3>,2:<2,-1,-3>),-2>];
+	return RunDetection([<[<"a", 0>, <"b", 1>, <"c", 2>], |tmp:///NA|>], testing = true) == (0:(1:stEdge(1,3,0,2),3:stEdge(3,3,0,4),2:stEdge(2,3,0,3),0:stEdge(0,3,0,1)));
 }
 
 test bool MediumCase(){
-	NodeList result = CreateUkkonen([0,1,2,3,0,1,4]);//"abcabx");
-	NodeList correct = [<(0:<0,2,1>,1:<1,1,2>,2:<2,-1,-3>,4:<5,-1,-3>),-2>,<(2:<2,-1,-3>,4:<5,-1,-3>),2>,<(2:<2,-1,-3>,4:<5,-1,-3>),-2>];
-	return result == correct;
+	return RunDetection([<[<"a", 0>, <"b", 1>, <"c", 2>, <"a", 3>, <"b", 4>, <"x", 5>], |tmp:///NA|>], testing = true) ==  (4:(3:stEdge(5,6,4,5),2:stEdge(2,6,4,1)),6:(3:stEdge(5,6,6,7),2:stEdge(2,6,6,2)),0:(1:stEdge(1,1,0,6),3:stEdge(5,6,0,8),2:stEdge(2,6,0,3),4:stEdge(6,6,0,9),0:stEdge(0,1,0,4)));
 }
 
-test bool NormalCase(){
-	return CreateUkkonen([0,1,2,0,1,3,0,1,2,4]) == [<(1:<1,1,2>,2:<2,1,5>,0:<0,2,1>),-2>,<(3:<5,-1,-3>,2:<2,1,3>),2>,<(3:<5,-1,-3>,2:<2,1,4>),-2>,<(4:<9,-1,-3>,0:<3,-1,-3>),4>,<(4:<9,-1,-3>,0:<3,-1,-3>),5>,<(4:<9,-1,-3>,0:<3,-1,-3>),-2>];
-}
-
-test bool Rule1Test(){
-	return <0,1,1> == Rule1(<0,0,2>);
-}
-
-test bool Rule2Test(){
-	return [<("a":<0,-1,-3>),1>,<("b":<1,-1,-3>),-2>] == Rule2(1, [<("a":<0,-1,-3>),-2>,<("b":<1,-1,-3>),-2>]);
-}
-
-test bool Rule3Test(){
-	return <2,0,0> == Rule3(<1,0,0>, [<("a":<0,-1,-3>), -2>,<("b":<1,-1,-3>), 2>,<("c":<2,-1,-3>), -2>]);
-}
-
-test bool Branch(){
-	NodeList inputList = [<("a":<0,-1,-3>),-2>];
-	Pointer inputPointer = <0,0,2>;
-	NodeList correct = [<("a":<0,2,1>), -2>];
-	return Branch(inputList, inputPointer, "abcd") == correct;
-}
-
-test bool InsertTest(){
-	NodeList inputList = [<("a":<0,-1,-3>),-2>];
-	Pointer inputPointer = <0,0,2>;
-	NodeList correct = [<("a":<0,2,1>), -2>,<("c":<2,-1,-3>,"e":<4,-1,-3>), -2>];
-	return Insert(inputList, inputPointer, "abcdef", 4) == correct;
+test bool GenerateTests() {
+	
+	BFTest(1000, 50);
+	
+	// If we make it this far we can say it has been succesful.
+	return true;
 }
